@@ -1,0 +1,41 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Generated local outputs
+outputs/
+data/
+models/
+*.engine
+*.onnx
+*.pt
+*.pth
+*.gguf
+
+# Logs
+*.log
+tegrastats-*.txt
+
+# Private device records, credentials and camera captures
+paevik/20*.md
+jetson-baseline-*/
+assets/images/*.jpg
+assets/images/*.jpeg
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.ppk
+*.pub
+id_*
