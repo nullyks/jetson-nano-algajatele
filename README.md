@@ -11,12 +11,7 @@ See repo on eestikeelne õppematerjalide ja katsete kogu NVIDIA Jetson Orin Nano
 
 ## Kuidas seda repot kasutada
 
-Õppimine toimub samal ajal materjalide kirjutamisega:
-
-1. Tee väike katse.
-2. Kirjuta üles riistvara, tarkvara versioonid ja täpsed sammud.
-3. Lisa tulemus, probleemid ja järgmine katse.
-4. Tee materjal algajale loetavaks alles siis, kui oled seda ise läbi proovinud.
+Alusta teekaardist ning järgi juhendeid ja laboreid soovitatud järjekorras. Iga praktiline osa kirjeldab käsu eesmärki, vajalikkust ja oodatud tulemust. Osa lõpus oleva kontrollnimekirja abil saad veenduda, et oled valmis järgmise sammu juurde liikuma.
 
 ## Soovitatud algusjärjekord
 
@@ -28,7 +23,6 @@ See repo on eestikeelne õppematerjalide ja katsete kogu NVIDIA Jetson Orin Nano
 4. [Riistvara ja algseadistus](docs/01-riistvara-ja-algseadistus.md)
 5. [Kaamera ja raalnägemine](docs/02-kaamera-ja-computer-vision.md)
 6. [Kohalikud LLM-id](docs/03-kohalikud-llmid.md)
-7. [Õppematerjali kirjutamise muster](docs/04-oppematerjali-muster.md)
 
 ## Esimesed laborid
 
@@ -37,18 +31,9 @@ See repo on eestikeelne õppematerjalide ja katsete kogu NVIDIA Jetson Orin Nano
 3. [Lab 003: tekstiga juhitav objektituvastus - NanoOWL](labs/003-nanoowl-tekstipohine-objektituvastus.md)
 4. [Lab 004: esimene kohalik LLM](labs/004-esimene-kohalik-llm.md)
 
-## Päevik
+## Privaatsus
 
-Kasuta malli: [paevik/000-mall.md](paevik/000-mall.md)
-
-Iga uus õppimissamm võib saada oma päevikufaili, näiteks:
-
-```text
-paevik/2026-07-19-kaamera-esimene-test.md
-paevik/2026-07-20-ollama-esimene-mudel.md
-```
-
-Ära lisa avalikku reposse päevikut, mis sisaldab päris IP-aadresse, kasutajanimesid, hostinimesid, võrgu skanni tulemusi, paroole, privaatvõtmeid ega isiklikus ruumis tehtud kaamerapilte. Hoia sellised failid ainult kohalikult või puhasta need enne jagamist. Avalik võti ei ole üldjuhul saladus, kuid seda ei ole samuti vaja õppematerjali näitesse kopeerida.
+Ära lisa avalikku reposse päris IP-aadresse, kasutajanimesid, hostinimesid, võrgu skanni tulemusi, paroole, privaatvõtmeid ega isiklikus ruumis tehtud kaamerapilte. Hoia sellised andmed ainult kohalikult või puhasta need enne jagamist. Avalik võti ei ole üldjuhul saladus, kuid seda ei ole samuti vaja õppematerjali näitesse kopeerida.
 
 ## Allikad
 

@@ -40,17 +40,7 @@ Objektituvastus erineb pildiklassifikatsioonist, mis kirjeldab tervet pilti ühe
 - Jetsonil on internetiühendus ning vaba kettaruumi mitu gigabaiti.
 - Reaalajavoo tulemust vaatad Jetsoniga ühendatud ekraanilt. SSH korral kasuta esmalt pildinäiteid või salvesta tulemus videoks.
 
-Pane enne katseid päevikusse kirja järgmine. Ära lisa sinna parooli, RTSP URL-i, privaatset IP-aadressi ega päris kaamerapilti.
-
-```text
-Kuupäev:
-JetPacki või L4T versioon:
-Katsetatav kaamera:
-Mudel:
-Lävi:
-Tulemus:
-Märkus valepositiivse või valenegatiivse leiu kohta:
-```
+Enne katseid kontrolli, et tead JetPacki või L4T versiooni, katsetatavat kaamerat, mudelit ja kasutatavat läve. Katse järel oska nimetada vähemalt üks valepositiivne või valenegatiivne leid. Ära lisa parooli, RTSP URL-i, privaatset IP-aadressi ega päris kaamerapilti avalikku hoidlasse.
 
 ## 1. Kontrolli eeldusi Jetsonis
 
@@ -121,9 +111,9 @@ Oodatud tulemus: käsurida muutub konteineri käsureaks, näiteks `root@...:/jet
 
 ### Kui vaikimisi konteiner ei käivitu
 
-Kui näed viga `manifest ... not found`, siis ära asenda konteineri silti juhusliku L4T versiooniga. Pane päevikusse kirja täpne veateade, L4T versioon ja lähtekoodi allalaadimise kuupäev.
+Kui näed viga `manifest ... not found`, siis ära asenda konteineri silti juhusliku L4T versiooniga. Kontrolli täpset veateadet, L4T versiooni ja lähtekoodi allalaadimise kuupäeva.
 
-Projekti haldur on mõne JetPack 6 väljalaske puhul soovitanud `r36.3.0` silti ühilduvuslahendusena. See ei ole automaatne reegel. Kasuta teist silti ainult siis, kui projekti ametlik juhis või projekti halduri vastus hõlmab sinu L4T versiooni, ning kirjuta tehtud otsus päevikusse.
+Projekti haldur on mõne JetPack 6 väljalaske puhul soovitanud `r36.3.0` silti ühilduvuslahendusena. See ei ole automaatne reegel. Kasuta teist silti ainult siis, kui projekti ametlik juhis või projekti halduri vastus hõlmab sinu L4T versiooni, ning kontrolli kasutatud silti pärast konteineri avamist.
 
 ### L4T R36.4.7 erijuht
 
@@ -142,7 +132,7 @@ cd ~/jetson-inference
 
 Mida see käsk teeb: `--container` valib konkreetselt R36.3.0 keskkonna ja ülejäänud osa töötab samamoodi nagu vaikimisi käsk.
 
-Miks see vajalik on: väldid puuduva `r36.4.7` konteinerisildi viga. Eri L4T väljalasete segamine võib siiski tekitada sõltuvusprobleeme, seega kirjuta päevikusse kasutatud silt ning kontrolli pärast konteineri avamist kindlasti käsku `./detectnet --help`.
+Miks see vajalik on: väldid puuduva `r36.4.7` konteinerisildi viga. Eri L4T väljalasete segamine võib siiski tekitada sõltuvusprobleeme, seega kontrolli pärast konteineri avamist kindlasti käsku `./detectnet --help`.
 
 Oodatud tulemus: konteiner laaditakse alla ja avaneb käsurida. Kui näed NVIDIA, TensorRT või kaamera teekide viga, ära paigalda pakette konteinerisse juhuslikult; säilita veateade ja alusta pildinäite kontrolliga jaotisest 3.
 
@@ -176,7 +166,7 @@ Enne oma pildi katsetamist vaata [SSD-Mobilenet-v2 ametlikku COCO klasside loete
 
 Ka loetelus oleva klassi olemasolu ei taga õiget tulemust. Vaatepunkt, valgustus, kaugus, katmine ja objekti suurus mõjutavad tulemust. Näiteks `person` mudel töötab tavaliselt paremini tervikliku inimese kui väga lähedalt kaadris oleva näo korral; see mudel ei ole eraldi näotuvastaja.
 
-Kasuta kindlust tõlgendamisel: 50% leid on ebakindel hüpotees, mitte kinnitatud fakt. Võrdle sama pilti eri lävedega, näiteks `--threshold=0.30` ja `--threshold=0.70`, ning kirjuta valeleid päevikusse. Valeleid on õppimismaterjal, sest see näitab mudeli tegelikke piire.
+Kasuta kindlust tõlgendamisel: 50% leid on ebakindel hüpotees, mitte kinnitatud fakt. Võrdle sama pilti eri lävedega, näiteks `--threshold=0.30` ja `--threshold=0.70`, ning nimeta vähemalt üks valeleid. Valeleid on õppimismaterjal, sest see näitab mudeli tegelikke piire.
 
 ```bash
 # Ole kompileeritud programmide kaustas.
@@ -316,7 +306,7 @@ Mida käsud teevad: mõlemad kasutavad sama pilti ja mudelit, kuid erinevat kind
 
 Miks see vajalik on: lävi on teadlik kompromiss. Madal lävi püüab rohkem võimalikke leide, kõrge lävi usaldab ainult tugevamaid leide.
 
-Oodatud tulemus: 30% tulemuses on tavaliselt rohkem kaste kui 70% tulemuses. Pane päevikusse vähemalt üks kadunud leid või valepositiivne leid.
+Oodatud tulemus: 30% tulemuses on tavaliselt rohkem kaste kui 70% tulemuses. Tee kindlaks vähemalt üks kadunud leid või valepositiivne leid.
 
 ## 7. IMX219 reaalajavoog
 
@@ -382,7 +372,7 @@ Miks see vajalik on: USB-kaamera korral on õige V4L2 seade ja vorming sama täh
 
 Oodatud tulemus: näed M9 Pro pilti koos objektituvastuse tulemustega. Kui seadmenumber või vorming muutus, ära muuda väärtusi oletuse järgi: korda Lab 001 seadme- ja vormingukontrolli.
 
-Peata katse `Ctrl+C` abil. Kirjuta päevikusse vähemalt üks võrreldav tähelepanek IMX219 kohta: pildi vaatenurk, viivitus, tuvastuse kindlus või FPS.
+Peata katse `Ctrl+C` abil. Võrdle IMX219-ga vähemalt üht omadust: pildi vaatenurk, viivitus, tuvastuse kindlus või FPS.
 
 ## 9. IP-kaamera RTSP reaalajavoog
 
@@ -406,7 +396,7 @@ RTSP_URL="rtsp://$RTSP_USER:$RTSP_PASSWORD@$RTSP_HOST:554/stream1"
 
 Mida need käsud teevad: küsivad ühendusandmed interaktiivselt ja koostavad neist praeguse seansi URL-i. Parooli ei kirjutata käsureale ega käsuajaloosse.
 
-Miks see vajalik on: RTSP URL sisaldab sageli kasutajanime ja parooli. Seda ei tohi lisada GitHubi, ekraanipiltidele ega päevikusse.
+Miks see vajalik on: RTSP URL sisaldab sageli kasutajanime ja parooli. Seda ei tohi lisada GitHubi ega ekraanipiltidele.
 
 Oodatud tulemus: parooli sisestamisel ei ilmu tähti ekraanile. Ära kontrolli URL-i käsuga `echo "$RTSP_URL"`.
 
@@ -467,7 +457,7 @@ Labor on esimesel tasemel tehtud, kui kõik järgmised väited on tõesed.
 - IMX219 töötas reaalajas sisendiga `csi://0`, mitte `/dev/video0`.
 - M9 Pro töötas reaalajas sisendiga `/dev/video1`.
 - RTSP pilt või reaalajavoog töötas ilma, et parool jõudis käsuajaloosse või hoidlasse.
-- Päevikus on mudeli nimi, lävi, FPS või salvestatud video pikkus ning vähemalt üks valeleid või märkamata jäänud objekt.
+- Tead kasutatud mudelit ja läve ning oskad nimetada FPS-i või salvestatud video pikkust ja vähemalt üht valeleidu või märkamata jäänud objekti.
 
 ## Kui tulemust ei tule
 

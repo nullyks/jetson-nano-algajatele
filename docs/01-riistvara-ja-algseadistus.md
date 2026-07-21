@@ -53,7 +53,7 @@ Mida need käsud teevad: nad näitavad Jetson Linuxi väljalaset, Linuxi tuuma, 
 
 Miks see vajalik on: Jetsoni juhised sõltuvad tugevalt JetPacki versioonist, vaba kettaruumi hulgast ja sellest, kas võrk on enne järgmist sammu olemas.
 
-Oodatud tulemus: iga käsk annab teaberidu. Salvesta päevikusse versioonid ja mahud, kuid ära lisa avalikku reposse `ip addr` täielikku väljundit, sest see võib sisaldada sinu seadme MAC- ja IP-aadresse.
+Oodatud tulemus: iga käsk annab teaberidu. Kontrolli, et tead JetPacki, Jetson Linuxi, Ubuntu, ketta ja mälu väärtusi, kuid ära lisa avalikku reposse `ip addr` täielikku väljundit, sest see võib sisaldada sinu seadme MAC- ja IP-aadresse.
 
 ## Kaugtööruum
 
@@ -120,13 +120,12 @@ Miks see vajalik on: enne mudelite käivitamist saad teada seadme tavapärase te
 
 Oodatud tulemus: näed perioodiliselt uuenevat koormusvaadet. Sulge see klahviga `q`.
 
-Kirjuta päevikusse:
+## Kontrollküsimused enne mudelite käivitamist
 
-- idle temperatuur;
-- koormuse temperatuur;
-- RAM kasutus;
-- swap olemasolu;
-- kas mudel kasutab GPU-d.
+- Kas tead seadme jõudeoleku temperatuuri?
+- Kas tead koormuse ajal mõõdetud temperatuuri?
+- Kas tead praegust RAM-i kasutust ja kas swap on olemas?
+- Kas tead, kuidas hiljem kontrollida, kas mudel kasutab GPU-d?
 
 ## Allikas
 

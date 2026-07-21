@@ -18,7 +18,7 @@ Videoseadmete numbrid ei ole püsivad. USB seadmete lisamine, eemaldamine või k
 
 ## Privaatsus enne alustamist
 
-RTSP aadress võib sisaldada kasutajanime, parooli ja kohtvõrgu IP-aadressi. Ära kirjuta päris RTSP aadressi, kasutajaandmeid ega kaamerapilte GitHubi, päevikusse või vestlusesse. Selles laboris kasutatakse ainult kohatäiteid, näiteks:
+RTSP aadress võib sisaldada kasutajanime, parooli ja kohtvõrgu IP-aadressi. Ära kirjuta päris RTSP aadressi, kasutajaandmeid ega kaamerapilte GitHubi või vestlusesse. Selles laboris kasutatakse ainult kohatäiteid, näiteks:
 
 ```text
 rtsp://KASUTAJA:PAROOL@KAAMERA_IP:554/stream1
@@ -69,7 +69,7 @@ Miks see vajalik on: nii kinnitad, et IMX219 ja M9 Pro on õigete seadmenumbrite
 
 Oodatud tulemus: sinu seadmes peaks IMX219 olema seotud `/dev/video0` ja M9 Pro `/dev/video1` seadmega. Kui nimed või numbrid erinevad, kasuta järgmistes käskudes `v4l2-ctl --list-devices` tulemusest leitud õiget seadet.
 
-Kirjuta päevikusse ainult kaamera mudel ja seadmenumber, näiteks `IMX219 -> /dev/video0`. Ära lisa täit `v4l2-ctl --all` väljundit avalikku reposse, sest see võib sisaldada seadme seerianumbrit.
+Kontrollküsimus: kas tead, milline kaamera vastab sinu seadmes igale videoseadmele, näiteks `IMX219 -> /dev/video0`? Ära lisa täit `v4l2-ctl --all` väljundit avalikku reposse, sest see võib sisaldada seadme seerianumbrit.
 
 ## Samm 3: IMX219 kaader, kui `/dev/video0` annab `RG10` Bayeri toorandmed
 
@@ -167,7 +167,7 @@ Mida need käsud teevad:
 
 Miks see vajalik on: parooli kirjutamine otse käsusse jätaks selle terminali ajalukku. Kohatäidetega koostatud muutuja on õpetamiseks turvalisem.
 
-Oodatud tulemus: ükski käsk ei kuva parooli. Muutuja kehtib ainult selles terminaliaknas. Ära kuva `RTSP_URL` väärtust ega kopeeri seda päevikusse.
+Oodatud tulemus: ükski käsk ei kuva parooli. Muutuja kehtib ainult selles terminaliaknas. Ära kuva `RTSP_URL` väärtust ega lisa seda avalikku hoidlasse.
 
 Testi H.264 videovoo vastuvõttu ilma pilti salvestamata:
 
@@ -217,20 +217,13 @@ Oodatud tulemus: käsk ei kuva midagi. Järgmine RTSP käsk vajab ühenduse andm
 
 RTSP kaamerale kasuta võimaluse korral eraldi piiratud õigustega kasutajakontot. Parooliga RTSP aadress võib protsessiloendis nähtav olla, seega ära kasuta selleks oma Jetsoni, arvuti ega muu olulise teenuse parooli.
 
-## Kontroll
+## Kontrollküsimused
 
-Pane päevikusse ainult mittetundlik kokkuvõte:
-
-```text
-IMX219 seade: /dev/video0 või muu tuvastatud seade
-IMX219 kaader salvestati: jah / ei
-M9 Pro seade: /dev/video1 või muu tuvastatud seade
-M9 Pro vorming: MJPG / YUYV / muu
-M9 Pro kaader salvestati: jah / ei
-RTSP kodek: H.264 / H.265 / muu
-RTSP kaader salvestati: jah / ei
-Probleemid:
-```
+- Kas tead IMX219 videoseadet ning kas sellest salvestati kaader?
+- Kas tead M9 Pro videoseadet ja selle vormingut, näiteks MJPG, YUYV või muu?
+- Kas M9 Pro kaader salvestati?
+- Kas tead RTSP voo kodekit, näiteks H.264, H.265 või muud, ning kas sellest salvestati kaader?
+- Kui midagi ei töötanud, kas tead, millise järgmise kontrolli teha?
 
 ## Kui ei tööta
 

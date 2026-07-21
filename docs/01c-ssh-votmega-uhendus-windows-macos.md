@@ -28,7 +28,7 @@ SSH lühinimi: jetson
 Võtmefaili nimi: jetson_ed25519
 ```
 
-`JETSONI_KASUTAJA` ja `JETSONI_IP` on kohatäited, mitte sõna-sõnalt kasutatavad väärtused. Asenda need enne iga käsu käivitamist oma seadme kasutajanime ja aadressiga. Ära kirjuta neid päris väärtusi avalikku reposse ega päevikusse.
+`JETSONI_KASUTAJA` ja `JETSONI_IP` on kohatäited, mitte sõna-sõnalt kasutatavad väärtused. Asenda need enne iga käsu käivitamist oma seadme kasutajanime ja aadressiga. Ära kirjuta päris väärtusi avalikku reposse.
 
 ## Windows: PowerShelliga
 

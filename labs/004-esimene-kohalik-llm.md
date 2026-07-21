@@ -30,15 +30,7 @@ jtop
 
 Alusta väikese mudeliga. Hea esimene klass on umbes 0.5B-4B parameetrit.
 
-Pane päevikusse:
-
-```text
-Mudel:
-Parameetrid:
-Kvantimine:
-Allikas:
-Litsents:
-```
+Enne mudeli käivitamist kontrolli selle nime, parameetrite arvu, kvantimist, allikat ja litsentsi.
 
 ## Samm 3: käivita mudel
 
@@ -75,22 +67,14 @@ ollama stop MUDELI_NIMI
 
 Seejärel proovi uuesti või vali väiksem mudel.
 
-## Kontroll
+## Kontrollküsimused
 
-Pane kirja:
+- Kas mudel käivitus?
+- Kui kaua kulus esimese vastuseni ja mitu tokens/sec saavutas see, kui näit on saadaval?
+- Milline oli RAM-i, swap'i ja GPU koormus ning temperatuur?
+- Kas mudeli eesti keel oli arusaadav?
 
-```text
-Kas mudel käivitus:
-Esimese vastuse aeg:
-Tokens/sec, kui saadaval:
-RAM:
-Swap:
-GPU koormus:
-Temperatuur:
-Kas eesti keel oli arusaadav:
-```
-
-Kui vastus on sisuliselt halb, kirjuta see samuti tulemuseks. See on mudelivaliku info, mitte sinu viga.
+Kui vastus on sisuliselt halb, arvesta seda samuti mudelivaliku tulemusena, mitte oma veana.
 
 ## Kui ei tööta
 

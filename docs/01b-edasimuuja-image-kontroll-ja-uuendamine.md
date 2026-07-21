@@ -23,19 +23,13 @@ Kõigepealt salvesta algseis. Kui uuendus rikub mõne edasimüüja eriseadistuse
 Miinimum:
 
 - kopeeri oma failid mujale;
-- tee päevikusse pilt või tekst kõigist versioonidest;
 - kui võimalik, tee kogu kettast kettatõmmis või kasuta edasimüüja varundusjuhendit.
 
-Päevikusse:
+Kontrollküsimused enne muutmist:
 
-```text
-Kuupäev:
-Edasimüüja:
-Kettatõmmise nimi või allikas:
-Kas mul on taastamisjuhend:
-Kas mul on varukoopia:
-Miks jätan edasimüüja kettatõmmise alles:
-```
+- Kas tead edasimüüjat ning kettatõmmise nime või allikat?
+- Kas taastamisjuhend ja varukoopia on olemas?
+- Kas tead, milliseid kaamera-, robootika-, GPIO-, ekraani- või demoseadistusi kettatõmmises vajad?
 
 ## Samm 1: kogu süsteemi inventuur
 
@@ -72,7 +66,7 @@ Mida see käsk teeb: määrab muutuja `OUT` samale kuupäevaga kataloogile, et j
 
 Miks see vajalik on: terminali sulgemisel muutujad kaovad, kuid inventuurifailide kogumine peab jätkuma samas kataloogis.
 
-Oodatud tulemus: käsk ei prindi tavaliselt midagi. Kontrollimiseks võid kasutada `echo "$OUT"`, kuid ära kopeeri selle väljundit avalikku päevikusse, kui see sisaldab isiklikku kasutajanime.
+Oodatud tulemus: käsk ei prindi tavaliselt midagi. Kontrollimiseks võid kasutada `echo "$OUT"`, kuid ära avalda selle väljundit, kui see sisaldab isiklikku kasutajanime.
 
 NVIDIA pakettide seis:
 
@@ -159,7 +153,7 @@ Mida see käsk teeb: muudab praegu sisselogitud kasutaja parooli ja peidab sises
 
 Miks see vajalik on: edasimüüja vaikimisi või ajutine parool ei tohi jääda kasutusse.
 
-Oodatud tulemus: süsteem kinnitab parooli muutmist pärast uue parooli kaks korda sisestamist. Ära kirjuta parooli päevikusse ega GitHubi.
+Oodatud tulemus: süsteem kinnitab parooli muutmist pärast uue parooli kaks korda sisestamist. Ära kirjuta parooli ühtegi faili ega GitHubi.
 
 Kui kettatõmmis tuli vaikimisi kasutajaga nagu `yahboom`, `jetson`, `ubuntu` või muu edasimüüja konto, tee enne kustutamist või lukustamist endale eraldi administraatorikasutaja ja testi, et `sudo` töötab.
 
@@ -357,7 +351,7 @@ Oluline:
 - ära muuda NVIDIA `r36.x` või `r39.x` APT allikat uueks haruks ainult oletuse põhjal;
 - suurema JetPacki või Jetson Linuxi versioonivahetuse puhul järgi NVIDIA dokumentatsiooni või tee puhas paigaldus.
 
-Kui `apt` küsib, kas asendada kohaliku konfiguratsioonifaili NVIDIA versiooniga, tee enne paus. Edasimüüja kettatõmmises võib kohalik fail sisaldada kaamera, carrier board'i või demo jaoks vajalikku muudatust. Kirjuta failinimi päevikusse ja otsusta teadlikult.
+Kui `apt` küsib, kas asendada kohaliku konfiguratsioonifaili NVIDIA versiooniga, tee enne paus. Edasimüüja kettatõmmises võib kohalik fail sisaldada kaamera, carrier board'i või demo jaoks vajalikku muudatust. Kontrolli faili eesmärki ja otsusta teadlikult.
 
 ## Samm 6: kontrolli JetPacki komponentide olemasolu
 
@@ -404,14 +398,12 @@ Oodatud tulemus: paigaldus küsib kinnitust ja lõpeb veata. Taaskäivituse jär
 
 Kui simulatsioon näitab `unmet dependencies`, versioonikonflikte või katset vanemaid CUDA, cuDNN, TensorRT või container-toolkit pakette peale suruda, ära jätka pimesi. Edasimüüja kettatõmmis võib kasutada uuemaid või teistest NVIDIA repodest paigaldatud komponente ning `nvidia-jetpack` metapaketi puudumine ei tähenda siis automaatselt, et süsteem on katki.
 
-Kirjuta päevikusse:
+Enne otsust kontrolli järgmisi küsimusi:
 
-```text
-nvidia-jetpack metapakett:
-Kas CUDA/cuDNN/TensorRT on eraldi paigaldatud:
-apt-get -s install nvidia-jetpack tulemus:
-Otsus: ei paigalda / paigaldan / teen puhta paigalduse
-```
+- Kas `nvidia-jetpack` metapakett on olemas?
+- Kas CUDA, cuDNN ja TensorRT on eraldi paigaldatud?
+- Kas `apt-get -s install nvidia-jetpack` tulemus on ootuspärane?
+- Kas jätkad praeguse kettatõmmisega, paigaldad metapaketi või teed puhta paigalduse?
 
 ## Samm 7: luba turvauuendused kontrollitud viisil
 
@@ -445,7 +437,7 @@ Soovitus õppeseadmele:
 
 - luba automaatsed turvauuendused;
 - ära luba automaatset rebooti;
-- tee NVIDIA ja JetPacki uuendused käsitsi, päevikusse märgitult.
+- tee NVIDIA ja JetPacki uuendused käsitsi ning kontrolli enne kinnitamist APT pakutavaid muudatusi.
 
 ## Samm 8: piira võrgust nähtavaid teenuseid tulemüüriga
 
@@ -507,20 +499,12 @@ Tee puhas paigaldus, kui:
 
 ## Valmisoleku kontroll
 
-Õppetükk on valmis, kui sul on kataloog `~/jetson-baseline-YYYY-MM-DD` ja päevikus:
+Õppetükk on valmis, kui sul on kataloog `~/jetson-baseline-YYYY-MM-DD` ja saad kõigile küsimustele vastata:
 
-```text
-JetPack:
-Jetson Linux / L4T:
-Edasimüüja kettatõmmise allikas:
-APT allikad kontrollitud:
-Vaikimisi paroolid vahetatud:
-Tundmatud kontod kontrollitud:
-Avatud teenused kontrollitud:
-Tulemüür seadistatud:
-Paketid uuendatud:
-nvidia-jetpack seis:
-Otsus: jätkan selle kettatõmmisega / teen puhta paigalduse
-```
+- Kas tead JetPacki ja Jetson Linuxi / L4T versiooni ning kettatõmmise allikat?
+- Kas APT allikad, kasutajakontod ja avatud teenused on kontrollitud?
+- Kas vaikimisi paroolid on vahetatud ning tulemüür on vajaduse korral seadistatud?
+- Kas paketid on uuendatud ja `nvidia-jetpack` seis on teada?
+- Kas tead, kas jätkad selle kettatõmmisega või teed puhta paigalduse?
 
 Järgmine samm: [Riistvara ja algseadistus](01-riistvara-ja-algseadistus.md).

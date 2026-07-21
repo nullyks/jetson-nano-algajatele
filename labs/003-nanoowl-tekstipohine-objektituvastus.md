@@ -88,7 +88,7 @@ Mida käsud teevad: `git clone` laadib tööriistad alla, paigaldusskript teeb k
 
 Miks see vajalik on: NanoOWL kasutab teistsugust Python-, PyTorch- ja TensorRT keskkonda kui Lab 002 `detectnet`.
 
-Oodatud tulemus: `jetson-containers --help` kuvab abi ning `autotag nanoowl` väljastab konteineri nime. Kui `autotag` pakub mitmetunnist ehitamist, ära kinnita seda pimesi: kirjuta pakkumine päevikusse ja kontrolli uuesti kettaruumi ning L4T versiooni.
+Oodatud tulemus: `jetson-containers --help` kuvab abi ning `autotag nanoowl` väljastab konteineri nime. Kui `autotag` pakub mitmetunnist ehitamist, ära kinnita seda pimesi: kontrolli uuesti kettaruumi ning L4T versiooni.
 
 Kui automaatne valik töötas, salvesta valitud konteinerpakett muutujasse. Käivita see käsk igas uues Jetsoni terminalis enne järgmiste jaotiste konteinerikäske:
 
@@ -115,7 +115,7 @@ docker manifest inspect "$NANOOWL_IMAGE" >/dev/null && \
 
 Mida need käsud teevad: esimene määrab edaspidi kasutatava konteinerpaketi nime. Teine küsib Dockeri registrist ainult konteinerpaketi manifesti, mitte tervet konteinerpaketti.
 
-Miks see vajalik on: nii ei jää õppija automaatse sildiotsingu taha kinni. Konkreetne konteinerpakett on ühilduvuskatse, seega kirjuta kasutatud silt päevikusse ja kontrolli laboris kõiki oodatud tulemusi.
+Miks see vajalik on: nii ei jää õppija automaatse sildiotsingu taha kinni. Konkreetne konteinerpakett on ühilduvuskatse, seega kontrolli laboris kõiki oodatud tulemusi.
 
 Kõigis järgmistes `jetson-containers run` käskudes kasutatakse muutujat `$NANOOWL_IMAGE`.
 
@@ -350,7 +350,7 @@ Mida see katse teeb: kasutab sama pilti ja mootorit, kuid muudab ainult mudelilt
 
 Miks see vajalik on: NanoOWL-i tulemus sõltub sõnastusest. Tekstiviip on katseparameeter, mitte objekti tõestus.
 
-Oodatud tulemus: võrdled vähemalt kahte tulemuspilti. Pane päevikusse kirja tekstiviip, lävi, leiud ja üks valeleid või märkamata jäänud objekt.
+Oodatud tulemus: võrdled vähemalt kahte tulemuspilti ning oskad nimetada kasutatud tekstiviiba, läve, leide ja ühe valeleiu või märkamata jäänud objekti.
 
 ## 7. Reaalajademo: M9 Pro, IMX219 ja RTSP
 
@@ -540,7 +540,7 @@ Seega ära asenda IMX219 või RTSP näites lihtsalt `--camera` numbrit. Kõigis 
 
 ## 9. Võrdlus Lab 002-ga
 
-Täida sama pildi kohta järgmine tabel.
+Võrdle sama pildi tulemusi järgmise tabeli abil.
 
 | Küsimus | `detectnet` Lab 002 | NanoOWL Lab 003 |
 | --- | --- | --- |
@@ -550,18 +550,13 @@ Täida sama pildi kohta järgmine tabel.
 | Mis on esimene usaldusväärne sisend? | JPEG pildifail | sama JPEG pildifail |
 | Mis on esimene otsevoog selles komplektis? | IMX219, M9 Pro või RTSP | M9 Pro, IMX219 või RTSP sisendadapteri kaudu |
 
-Kirjuta päevikusse:
+Kontrollküsimused pärast võrdlust:
 
-```text
-Pildifail:
-Tekstiviip:
-Lävi:
-NanoOWL-i leitud objektid:
-Valeleid:
-Märkamata jäänud objekt:
-Võrdlus detectnet-i tulemusega:
-Kas tulemuse järgi saab luua olukorrareegli:
-```
+- Millist pildifaili, tekstiviipa ja läve kasutasid?
+- Millised objektid NanoOWL leidis?
+- Kas esines valeleid või märkamata jäänud objekt?
+- Mille poolest erineb tulemus Lab 002 `detectnet`-i tulemusest?
+- Kas tulemuse järgi saaks luua olukorrareegli?
 
 ## 10. Kontrollnimekiri
 
@@ -593,7 +588,7 @@ Labor on tehtud esimesel tasemel, kui:
 | tulemuspilt on tühi või leide pole | tekstiviip, lävi või pilt ei sobi | alanda läve näiteks `0.05` ja lihtsusta ingliskeelset tekstiviipa |
 | M9 Pro demo ei ava pilti | `/dev/video1` ei ole enam M9 Pro või kaamera on hõivatud | korda Lab 001 seadmete kontrolli ja sulge muud kaameraprogrammid |
 | `Could not open CSI camera sensor-id 0` | Argus ei pääse sensorile ligi või kaamera on hõivatud | sulge muud IMX219 programmid, kontrolli Lab 001 Arguse testi ning käivita demo uuesti |
-| `Could not open RTSP stream` | `RTSP_URL` puudub, voog ei ole H.264 või võrk ei jõua kaamerani | kontrolli muutuja sisestamist, kaamera vooteed ja sama kohtvõrku; ära kuva URL-i päevikus |
+| `Could not open RTSP stream` | `RTSP_URL` puudub, voog ei ole H.264 või võrk ei jõua kaamerani | kontrolli muutuja sisestamist, kaamera vooteed ja sama kohtvõrku; ära kuva URL-i avalikus kohas |
 | RTSP pilt jääb seisma | võrgu kõikumine või liiga väike puhver | proovi `--latency 500` ja kontrolli kaamera võrguühendust |
 | veebileht avaneb Jetsonis, kuid mitte teises arvutis | UFW keelab pordi 7860 või arvutid ei ole samas kohtvõrgus | kontrolli jaotise 7 UFW reeglit ning mõlema seadme võrguühendust |
 | veebileht ei avane teisest arvutist | kohtvõrk, tulemüür või vale Jetsoni aadress | kontrolli, et mõlemad seadmed on samas võrgus ja demo töötab Jetsonis |

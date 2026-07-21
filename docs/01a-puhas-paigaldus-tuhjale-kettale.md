@@ -9,18 +9,11 @@
 
 See rada sobib siis, kui komplekt tuli ilma valmis kettata või tahad alustada puhta, ametliku süsteemiga.
 
-## Enne alustamist
+## Kontrollküsimused enne alustamist
 
-Kirjuta päevikusse:
-
-```text
-Kuupäev:
-Riistvara:
-Carrier board: NVIDIA ametlik / YAHBOOM / muu
-Sihtketas: microSD / NVMe
-Soovitud JetPack:
-Miks valin puhta paigalduse:
-```
+- Kas tead oma riistvara ja carrier board'i tootjat?
+- Kas tead, kas paigaldad süsteemi microSD kaardile või NVMe SSD-le?
+- Kas tead soovitud JetPacki versiooni ning miks valid puhta paigalduse?
 
 Tähtis eristus:
 
@@ -57,15 +50,7 @@ Monitoriga:
 
 Laadi JetPack 7.2 / Jetson Linux 39.2 ISO alla NVIDIA ametlikult JetPacki lehelt või Orin Nano Quick Start juhendi kaudu.
 
-Pane päevikusse:
-
-```text
-Allalaadimise leht:
-Faili nimi:
-JetPack:
-Jetson Linux / L4T:
-Kontrollsumma, kui NVIDIA selle annab:
-```
+Enne järgmise sammu juurde minekut kontrolli allalaaditud ISO-tõmmise juures allalaadimise lehte, failinime, JetPacki ja Jetson Linuxi / L4T versiooni ning NVIDIA antud kontrollsummat, kui see on olemas.
 
 Ära kasuta juhuslikku pilveteenuse linki ega foorumist leitud ISO-tõmmist, kui eesmärk on tuntud ja korratav algseis.
 
@@ -101,7 +86,7 @@ free -h
 
 Mida need käsud teevad: nad kuvavad vastavalt Jetson Linuxi väljalaske, Linuxi tuuma, Ubuntu väljalaske, kettaruumi ja mälu kasutuse. Ükski neist ei muuda süsteemi.
 
-Miks see vajalik on: nii saad kinnitada, et käivitus toimus just äsja paigaldatud sihtkettalt ja päevikus on järgmiste juhendite jaoks vajalik versiooniteave.
+Miks see vajalik on: nii saad kinnitada, et käivitus toimus just äsja paigaldatud sihtkettalt ning järgmiste juhendite jaoks vajalik versiooniteave on teada.
 
 Oodatud tulemus: iga käsk annab ühe või mitu teaberida. Kui `df -h` ei näita ootuspärast sihtketast, peatu ja kontrolli alglaadimisseadet enne järgmisi samme.
 
@@ -179,7 +164,7 @@ Mida see käsk teeb: muudab praegu sisselogitud kasutaja parooli ning küsib van
 
 Miks see vajalik on: ajutine või vaikimisi parool ei tohi jääda kasutusse ka pärast muude turvaseadete tegemist.
 
-Oodatud tulemus: pärast uue parooli kaks korda sisestamist kinnitab süsteem, et parool on muudetud. Ära kirjuta parooli päevikusse ega reposse.
+Oodatud tulemus: pärast uue parooli kaks korda sisestamist kinnitab süsteem, et parool on muudetud. Ära kirjuta parooli ühtegi faili ega avalikku hoidlasse.
 
 Kontrolli, kas SSH töötab:
 
@@ -240,19 +225,13 @@ Märkus: Ubuntu `unattended-upgrades` ei lisa automaatselt iga kolmanda osapoole
 
 ## Valmisoleku kontroll
 
-Õppetükk on valmis, kui saad päevikusse kirjutada:
+Õppetükk on valmis, kui saad kõigile küsimustele jaatavalt vastata:
 
-```text
-JetPack:
-Jetson Linux / L4T:
-UEFI/QSPI püsivara versioon:
-Sihtketas:
-Kasutaja loodud:
-Vaikimisi paroole ei ole:
-Paketid uuendatud:
-nvidia-jetpack paigaldatud:
-SSH kontrollitud:
-Turvauuendused seadistatud:
-```
+- Kas tead JetPacki, Jetson Linuxi / L4T ja UEFI/QSPI püsivara versiooni?
+- Kas süsteem käivitub valitud sihtkettalt?
+- Kas kasutajakonto on loodud ja vaikimisi paroolid asendatud?
+- Kas paketid on uuendatud ning `nvidia-jetpack` on paigaldatud või selle seis on kontrollitud?
+- Kas SSH seis on kontrollitud?
+- Kas automaatsed Ubuntu turvauuendused on seadistatud?
 
 Järgmine samm: [Riistvara ja algseadistus](01-riistvara-ja-algseadistus.md).

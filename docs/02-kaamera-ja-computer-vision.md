@@ -113,7 +113,7 @@ Mida need käsud teevad: `read` küsib väärtused sisendina, `-s` peidab parool
 
 Miks see vajalik on: parooliga URL-i kirjutamine otse käsusse salvestaks selle tavaliselt terminali ajalukku. Need muutujad püsivad ainult praeguses terminaliseansis.
 
-Oodatud tulemus: parool ei ilmu ekraanile. Ära kuva muutujat käsuga `echo "$RTSP_URL"` ega lisa seda oma päevikusse.
+Oodatud tulemus: parool ei ilmu ekraanile. Ära kuva muutujat käsuga `echo "$RTSP_URL"` ega lisa seda avalikku hoidlasse.
 
 H.264 voost ühe kaadri salvestamiseks:
 

@@ -1,6 +1,6 @@
 # Teekaart
 
-See teekaart on tehtud nii, et iga samm oleks korraga õppimine, katsetamine ja õppematerjali loomine.
+See teekaart juhib algseadistusest kaamera-, raalnägemise- ja kohalike LLM-ide katseteni.
 
 ## 0. Tase: tarkvara tuntud ja turvalisse algseisu
 
@@ -10,10 +10,10 @@ Tulemused:
 
 - tead, milline JetPack / Jetson Linux versioon seadmes jookseb;
 - tead, kas kasutad ametlikku NVIDIA paigaldust või edasimüüja kohandatud kettatõmmist;
-- sul on kirjas APT allikad, kasutajakontod ja võrgu kaudu avatud teenused;
+- oled kontrollinud APT allikaid, kasutajakontosid ja võrgu kaudu avatud teenuseid;
 - vaikimisi paroolid on vahetatud;
 - süsteem on sama JetPacki haru piires uuendatud;
-- sul on esimene päevikukanne, mis ei sisalda avaldamiseks mõeldud versioonis päris võrgu- ega kontoteavet.
+- tead, millist süsteemi- ja võrguinfot ei tohi avalikku hoidlasse lisada.
 
 Vali üks rada:
 
@@ -58,7 +58,7 @@ Tulemused:
 - pilt või videovoog avaneb;
 - tead kaamera resolutsiooni ja FPS-i;
 - sul on esimene testpilt kohalikult salvestatud; avalikku reposse lisa see ainult siis, kui pilt ei sisalda era- ega muud tundlikku teavet;
-- probleemid on kirjas nii, et neid saab korrata.
+- oskad kasutada labori tõrkeotsingu jaotist, kui tulemus erineb oodatust.
 
 Alusta: [Lab 001](../labs/001-kaamera-kontroll.md)
 
@@ -116,7 +116,7 @@ Alusta lihtsast:
 - väike mudel;
 - `tegrastats` või `jtop` koormuse jälgimiseks;
 - lühike testprompt;
-- päevikusse tokens/sec, mälu kasutus ja temperatuur.
+- oled kontrollinud tokens/sec näitu, mälu kasutust ja temperatuuri.
 
 Alusta: [Lab 004](../labs/004-esimene-kohalik-llm.md)
 

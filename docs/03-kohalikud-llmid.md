@@ -40,16 +40,14 @@ Testprompt:
 Selgita eesti keeles ühe lausega, mis on Jetson Orin Nano.
 ```
 
-Pane kirja:
+Kontrollküsimused mudeli valimisel:
 
-- mudeli nimi ja suurus;
-- JetPacki versioon;
-- kas GPU koormus muutus;
-- RAM ja swap kasutus;
-- vastuse kiirus;
-- kas mudel vastas eesti keeles rahuldavalt.
+- Mis on mudeli nimi ja suurus?
+- Millist JetPacki versiooni kasutad?
+- Kas GPU koormus muutus ning milline oli RAM-i ja swap'i kasutus?
+- Kas vastuse kiirus ja eesti keele kvaliteet sobivad sinu eesmärgiga?
 
-Oluline: mudeli käivitumine ja GPU kasutamine ei tähenda veel, et mudel sobib sinu ülesandeks. Väga väike mudel võib tehniliselt töötada, aga anda halva eestikeelse vastuse. Pane kvaliteet ausalt kirja.
+Oluline: mudeli käivitumine ja GPU kasutamine ei tähenda veel, et mudel sobib sinu ülesandeks. Väga väike mudel võib tehniliselt töötada, aga anda halva eestikeelse vastuse. Hinda kvaliteeti ausalt.
 
 Kui saad GPU mälu vea, peata enne uut katset laetud mudelid:
 
