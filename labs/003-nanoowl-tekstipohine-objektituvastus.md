@@ -8,7 +8,7 @@ Selles laboris kasutad NanoOWL-i: avatud sõnavaraga objektituvastust. Erinevalt
 varem salvestatud kaamerapilt + tekstiviip -> NanoOWL -> tulemuspilt
 ```
 
-Alusta kõigi kolme kaamera **varem salvestatud JPEG piltidega**. Seejärel ava M9 Pro USB-kaamera reaalajas. IMX219 ja RTSP otsevoog jäetakse selles laboris teadlikult järgmise etapi tööks, sest NanoOWL-i ametlik reaalajademo kasutab V4L2 kaameraindeksit, mitte `csi://0` või RTSP URI-d.
+Alusta kõigi kolme kaamera **varem salvestatud JPEG piltidega**. Seejärel ava reaalajas M9 Pro USB-kaamera, IMX219 CSI-kaamera või RTSP-kaamera. NanoOWL-i ametlik reaalajademo kasutab ainult V4L2 kaameraindeksit, mistõttu selle labori juurde kuulub eraldi, kommenteeritud sisendadapter.
 
 ## Mida õpid
 
@@ -17,6 +17,8 @@ Alusta kõigi kolme kaamera **varem salvestatud JPEG piltidega**. Seejärel ava 
 - kuidas paigaldada `jetson-containers` tööriistu;
 - kuidas hoida TensorRT mootor ja tulemuspildid Jetsonis püsivalt alles;
 - kuidas võrrelda sama pilti `detectnet`-i ja NanoOWL-iga;
+- miks IMX219, USB- ja RTSP-kaamera vajavad eri hõivamiskihti;
+- kuidas anda RTSP ühendusandmed konteinerile ilma neid käsureale või GitHubi kirjutamata;
 - miks tekstiviip ei tee tundmatu eseme tuvastust automaatselt kindlaks.
 
 ## Miks on see eraldi labor
@@ -350,11 +352,48 @@ Miks see vajalik on: NanoOWL-i tulemus sõltub sõnastusest. Tekstiviip on katse
 
 Oodatud tulemus: võrdled vähemalt kahte tulemuspilti. Pane päevikusse kirja tekstiviip, lävi, leiud ja üks valeleid või märkamata jäänud objekt.
 
-## 7. M9 Pro reaalajademo
+## 7. Reaalajademo: M9 Pro, IMX219 ja RTSP
 
-NanoOWL-i ametlik `tree_demo.py` kasutab OpenCV kaameraindeksit. Selles komplektis tähendab `--camera 1` M9 Pro USB-kaamerat `/dev/video1`.
+NanoOWL-i ametlik `tree_demo.py` avab ainult numbrilise V4L2 kaameraindeksi. See sobib M9 Pro jaoks, kuid mitte selle komplekti IMX219 jaoks ega RTSP aadressi jaoks. Labori fail [`scripts/nanoowl_stream_demo.py`](../scripts/nanoowl_stream_demo.py) hoiab NanoOWL-i mudeli ja veebilehe samana, kuid lisab kolm sisendit:
 
-Veebidemo kasutab porti 7860. Kui Jetsonis on UFW tulemüür aktiivne, luba see port ainult usaldatud kohtvõrgust. Asenda järgmises näites `10.10.0.0/24` oma kohtvõrgu aadressivahemikuga; ära kasuta reeglit avaliku võrgu jaoks.
+- `v4l2`: USB-kaamera, näiteks M9 Pro;
+- `csi`: NVIDIA Arguse kaudu IMX219;
+- `rtsp`: GStreameri kaudu H.264 RTSP voog.
+
+See on teadlikult varasemast M9 Pro näitest erinev. Erinevus on ainult kaadri hõivamises: pärast OpenCV BGR-kaadri saamist kasutavad kõik kolm sama NanoOWL-i TensorRT mootorit, tekstiviipa ja veebilehte.
+
+### 7.1 Too demoprogramm Jetsonisse
+
+Tee see kord Jetsoni host-terminalis. Kui õppematerjalide hoidlat Jetsonis veel ei ole, klooni see üks kord.
+
+```bash
+# Klooni avalik õppematerjalide hoidla Jetsoni kodukausta.
+# Kaust sisaldab labori Markdown-faile ja käivitatavat demoprogrammi.
+git clone --depth=1 https://github.com/nullyks/jetson-nano-algajatele.git \
+  "$HOME/jetson-nano-algajatele"
+```
+
+Kui hoidla on juba olemas, uuenda seda enne labori jätkamist.
+
+```bash
+# Uuenda Jetsonis olevat õppematerjalide klooni koos demoprogrammiga.
+# --ff-only keeldub automaatsest ühendamisest, kui oled kohapeal sama faili muutnud.
+git -C "$HOME/jetson-nano-algajatele" pull --ff-only
+
+# Kontrolli, et NanoOWL-i sisendadapter on olemas.
+ls -lh "$HOME/jetson-nano-algajatele/scripts/nanoowl_stream_demo.py"
+
+# Määra selles terminalis varem loodud kohalik NanoOWL-i paranduspilt.
+NANOOWL_IMAGE="nanoowl-local:latest"
+```
+
+Mida käsud teevad: `git clone` teeb materjalidest kohaliku koopia. `git pull --ff-only` toob olemasolevasse klooni uuema versiooni. `ls` kinnitab skripti asukoha. Muutuja `NANOOWL_IMAGE` hoiab pikkade käskude puhul konteineri nime ühes kohas.
+
+Miks see vajalik on: otsevoonäited kasutavad hoidlas olevat skripti. See on versioonihalduses, seega saab parandusi turvaliselt jagada ilma, et peaksid koodi vestlusest või juhuslikust veebilehest kopeerima.
+
+### 7.2 Luba veebileht ainult usaldatud kohtvõrgus
+
+Kõik järgmised demod kasutavad porti 7860. Kui Jetsonis on UFW tulemüür aktiivne, luba see port ainult usaldatud kohtvõrgust. Asenda näites `10.10.0.0/24` oma kohtvõrgu aadressivahemikuga; ära tee seda porti avalikust internetist kättesaadavaks.
 
 ```bash
 # Näita tulemüüri praegust olekut ja reegleid.
@@ -363,27 +402,31 @@ sudo ufw status numbered
 # Näide: luba veebidemo ainult võrgust 10.10.0.0/24.
 # Asenda aadressivahemik enne käsu käivitamist oma kohtvõrgu omaga.
 sudo ufw allow from 10.10.0.0/24 to any port 7860 proto tcp \
-  comment 'NanoOWL M9 demo trusted LAN'
+  comment 'NanoOWL demo trusted LAN'
 ```
 
 Mida käsud teevad: esimene näitab, kas UFW tulemüür on aktiivne. Teine lubab TCP-pordi 7860 ainult valitud kohtvõrgust.
 
-Miks see vajalik on: UFW vaikimisi sisenevaid ühendusi keelava seadistuse korral töötab demo Jetsonis, kuid teine arvuti ei saa veebilehte avada.
+Miks see vajalik on: tulemüüri vaikimisi sisenevaid ühendusi keelava seadistuse korral töötab demo Jetsonis, kuid teine arvuti ei saa veebilehte avada.
 
 Oodatud tulemus: `ufw status numbered` näitab pordi 7860 lubavat reeglit. Kui UFW ei ole aktiivne, ei ole seda reeglit selle labori jaoks vaja.
 
-Tee see käsk Jetsoni host-terminalis:
+### 7.3 M9 Pro USB-kaamera otsevoog
+
+Tee see käsk Jetsoni host-terminalis. Lab 001 seadmete kontrollis oli M9 Pro kaamera `/dev/video1`; USB-seadmete ühendamise järjekord võib indeksi muuta.
 
 ```bash
 # Käivita NanoOWL-i veebidemo M9 Pro USB-kaameraga.
-# --camera 1 valib /dev/video1 ja 640x480 vähendab algse katse koormust.
-# --host 0.0.0.0 lubab samas kohtvõrgus olevalt arvutil veebilehte avada.
+# --source v4l2 kasutab OpenCV kaameraindeksit ning --camera 1 valib /dev/video1.
+# Skripti kaust seotakse konteineriga ainult lugemiseks, seega konteiner ei muuda õppematerjali faili.
 jetson-containers run \
   --workdir /opt/nanoowl/examples/tree_demo \
+  --volume "$HOME/jetson-nano-algajatele/scripts:/opt/jetson-beginner-scripts:ro" \
   --volume "$HOME/nanoowl-data:/opt/nanoowl/data" \
   "$NANOOWL_IMAGE" \
-  python3 tree_demo.py \
+  python3 /opt/jetson-beginner-scripts/nanoowl_stream_demo.py \
   /opt/nanoowl/data/owl_image_encoder_patch32.engine \
+  --source v4l2 \
   --camera 1 \
   --resolution 640x480 \
   --host 0.0.0.0 \
@@ -392,20 +435,108 @@ jetson-containers run \
 
 Mida see käsk teeb: avab M9 Pro reaalajavoo, käivitab NanoOWL-i ning pakub veebilehte, kus saad tekstiviipa muuta.
 
-Miks see vajalik on: veebiliides teeb tekstiviiba mõju nähtavaks ilma, et peaksid iga katse jaoks uut käsurida kirjutama. Esimesel veebidemo käivitamisel laaditakse alla umbes 338 MB CLIP-mudel; oota, kuni terminalis on näha rida `Running on http://...`.
+Miks see vajalik on: USB-kaamera annab juba OpenCV-le sobiva videovoo. `--camera 1` ei tähenda "teist kõigile sobivat kaamerat", vaid selle Jetsoni praegust V4L2 seadmeindeksit.
 
-Oodatud tulemus: ava teises arvutis samas kohtvõrgus aadress `http://JETSONI_AADRESS:7860`. Sisesta näiteks `[a person, a chair]` või `[a garden tool]`. Peata demo Jetsoni terminalis klahvidega `Ctrl+C`.
+### 7.4 IMX219 CSI-kaamera otsevoog
 
-Veebidemo ei ole kaitstud sisselogimisega. Kasuta seda ainult usaldatud kohtvõrgus ja peata pärast katset.
+Ära kasuta IMX219 puhul M9 Pro `--source v4l2 --camera 0` käsku. Selles komplektis on `/dev/video0` Bayeri toorandmestik. `--source csi` valib selle asemel NVIDIA Arguse kaamerateenuse ja GStreameri toru.
 
-## 8. Miks IMX219 ja RTSP ei ole selles laboris otsevoona
+```bash
+# Käivita NanoOWL-i veebidemo IMX219 CSI-kaameraga.
+# --sensor-id 0 tähendab esimest CSI andurit Arguse jaoks, mitte /dev/video0 faili.
+# --resolution määrab NanoOWL-i töötlemiseks ja veebilehele saadetava kaadri mõõdu.
+jetson-containers run \
+  --workdir /opt/nanoowl/examples/tree_demo \
+  --volume "$HOME/jetson-nano-algajatele/scripts:/opt/jetson-beginner-scripts:ro" \
+  --volume "$HOME/nanoowl-data:/opt/nanoowl/data" \
+  "$NANOOWL_IMAGE" \
+  python3 /opt/jetson-beginner-scripts/nanoowl_stream_demo.py \
+  /opt/nanoowl/data/owl_image_encoder_patch32.engine \
+  --source csi \
+  --sensor-id 0 \
+  --resolution 640x480 \
+  --framerate 30 \
+  --host 0.0.0.0 \
+  --port 7860
+```
 
-See labor töötleb IMX219 ja RTSP kaameraid usaldusväärselt juba salvestatud pildifailide kaudu. Nende otsevoo jaoks ära kopeeri M9 Pro käsku.
+Mida see käsk teeb: `nvarguscamerasrc` küsib IMX219-lt kaadreid Arguse kaudu, GStreamer teisendab need OpenCV BGR-pildiks ning NanoOWL lisab tekstiviibale vastavad leiud.
 
-- IMX219: ametlik demo annab `--camera` väärtuse OpenCV `VideoCapture`-ile. Selles komplektis on `/dev/video0` Bayeri toorandmestik, kuid Lab 001 ja Lab 002 kasutavad selle korrektseks töötlemiseks Arguse teed. Ametlik NanoOWL-i näide ei kasuta `csi://0`.
-- RTSP: ametlik demo ootab numbrilist kohalikku kaameraindeksit. RTSP voog vajab eraldi sisendadapterit, mis hoiab URL-i ja parooli turvaliselt seansimuutujas.
+Miks see vajalik on: IMX219 sensor ei väljasta selles seadistuses tavalist värvilist veebikaamerapilti. Argus haldab sensorirežiimi, NVIDIA riistvarakiirendust ja värvivormingut enne, kui mudel pilti näeb.
 
-See ei ole ebaõnnestumine. Sama raalnägemismudel võib eri videoallikate jaoks vajada erinevat hõivamiskihti.
+Oodatud tulemus: terminalis on rida `Opened CSI camera sensor-id 0.` ja seejärel `Running on http://...`. Veebilehel muuda tekstiviipa, näiteks `[a person, a chair]`. Kui USB-kaamera on samuti ühendatud, ei muuda see `--sensor-id 0` valikut.
+
+### 7.5 RTSP-kaamera otsevoog
+
+See näide eeldab H.264 RTSP voogu. Ära kirjuta RTSP aadressi otse NanoOWL-i käsku, sest käsuajalugu ja protsessiloend võivad selle hiljem nähtavaks teha. Küsi väärtused interaktiivselt, koosta aadress ainult praeguse terminaliseansi muutujasse ja anna konteinerile edasi ainult muutuja nimi.
+
+```bash
+# Küsi RTSP kasutajanimi. Sisestatud tekst on terminalis nähtav.
+read -r -p "RTSP kasutajanimi: " RTSP_USER
+
+# Küsi RTSP parool. -s peidab sisestuse terminalis.
+read -r -s -p "RTSP parool: " RTSP_PASSWORD
+printf '\n'
+
+# Küsi kaamera hostinimi või IP-aadress ja koosta RTSP aadress ainult mälus.
+read -r -p "RTSP kaamera host või IP: " RTSP_HOST
+export RTSP_URL="rtsp://${RTSP_USER}:${RTSP_PASSWORD}@${RTSP_HOST}:554/stream1"
+
+# Parooli eraldi muutujat pole pärast URL-i koostamist enam vaja.
+unset RTSP_PASSWORD
+```
+
+Mida käsud teevad: `read` küsib väärtused sisendina ning `-s` peidab parooli. `export` teeb `RTSP_URL` muutuja järgmisel käsul konteinerile edasiantavaks, kuid käsuajaloos on ikka ainult muutujate nimed, mitte sisestatud väärtused.
+
+Miks see vajalik on: RTSP kasutajanimi ja parool ei tohi sattuda GitHubi, ekraanipildile ega teksti kujul käsuajalukku.
+
+```bash
+# Käivita NanoOWL-i veebidemo RTSP vooga.
+# --env RTSP_URL annab konteinerile hosti keskkonnamuutuja väärtuse ilma URL-i käsureale kirjutamata.
+# --latency 200 jätab voole 200 ms puhvriruumi, et vältida võrgukõikumisest tingitud kaadrikadu.
+jetson-containers run \
+  --workdir /opt/nanoowl/examples/tree_demo \
+  --volume "$HOME/jetson-nano-algajatele/scripts:/opt/jetson-beginner-scripts:ro" \
+  --volume "$HOME/nanoowl-data:/opt/nanoowl/data" \
+  --env RTSP_URL \
+  "$NANOOWL_IMAGE" \
+  python3 /opt/jetson-beginner-scripts/nanoowl_stream_demo.py \
+  /opt/nanoowl/data/owl_image_encoder_patch32.engine \
+  --source rtsp \
+  --resolution 640x480 \
+  --latency 200 \
+  --host 0.0.0.0 \
+  --port 7860
+```
+
+Mida see käsk teeb: GStreamer avab keskkonnamuutujas oleva RTSP voo TCP kaudu, NVIDIA videodekooder teeb H.264 kaadri BGR-vormingusse ning NanoOWL saadab tuvastustulemuse veebilehele.
+
+Miks see vajalik on: RTSP ei ole Jetsoni kohalik kaameraindeks. GStreameri toru eraldab võrguühenduse, videodekodeerimise ja mudeli sisendi.
+
+Pärast demo peatamist klahvidega `Ctrl+C` eemalda RTSP andmed praegusest terminaliseansist.
+
+```bash
+# Eemalda ainult praeguse terminali ajutised RTSP muutujad.
+unset RTSP_URL RTSP_USER RTSP_HOST
+```
+
+Kui paroolis on URL-i erimärke nagu `@`, `:`, `/`, `?`, `#` või `%`, tuleb need URL-is protsentkodeerida. Kasuta võimalusel kaamera jaoks eraldi piiratud õigustega kasutajat, mitte isiklikku üldparooli.
+
+### 7.6 Ava veebileht ja peata demo
+
+Kui terminalis on näha rida `Running on http://...`, ava teises arvutis samas kohtvõrgus aadress `http://JETSONI_AADRESS:7860`. Sisesta näiteks `[a person, a chair]` või `[a garden tool]`. Peata demo Jetsoni terminalis klahvidega `Ctrl+C`.
+
+Veebidemo ei ole kaitstud sisselogimisega. Kasuta seda ainult usaldatud kohtvõrgus ja peata pärast katset. Esimesel veebidemo käivitamisel võib alla laadida umbes 338 MB CLIP-mudeli.
+
+## 8. Miks otsevoonäited on erinevad
+
+Sama raalnägemismudel võib eri videoallikate jaoks vajada eri hõivamiskihti.
+
+- M9 Pro: OpenCV avab kohaliku V4L2 seadme numbri järgi.
+- IMX219: Argus juhib CSI sensorit ning GStreamer teeb Bayeri andmetest mudelile sobiva BGR-kaadri.
+- RTSP: GStreamer loob võrguühenduse, puhverdab voogu ja dekodeerib H.264 video.
+
+Seega ära asenda IMX219 või RTSP näites lihtsalt `--camera` numbrit. Kõigis kolmes näites algab NanoOWL-i osa alles pärast seda, kui hõivamiskiht on andnud talle BGR-kaadri.
 
 ## 9. Võrdlus Lab 002-ga
 
@@ -417,7 +548,7 @@ Täida sama pildi kohta järgmine tabel.
 | Kas aiatööriista saab küsida? | ainult siis, kui COCO klass sobib | jah, tekstiviibaga |
 | Kas tulemus on alati õige? | ei | ei |
 | Mis on esimene usaldusväärne sisend? | JPEG pildifail | sama JPEG pildifail |
-| Mis on esimene otsevoog selles komplektis? | IMX219, M9 Pro või RTSP | M9 Pro USB-kaamera |
+| Mis on esimene otsevoog selles komplektis? | IMX219, M9 Pro või RTSP | M9 Pro, IMX219 või RTSP sisendadapteri kaudu |
 
 Kirjuta päevikusse:
 
@@ -442,7 +573,9 @@ Labor on tehtud esimesel tasemel, kui:
 - vähemalt ühe kaamera varem salvestatud pildist tekkis NanoOWL-i tulemuspilt;
 - oled proovinud sama pildi peal vähemalt kahte eri tekstiviipa;
 - tead, et pildifail ei ava kaamerat;
-- M9 Pro veebidemo töötab või oled vea koos seadmenumbri ja versiooniga päevikusse kirjutanud;
+- vähemalt ühe reaalajakaamera veebidemo töötab ning tead, milline `--source` sellele kaamerale sobib;
+- tead, miks IMX219 kasutab `--source csi`, mitte `--camera 0`;
+- tead, et RTSP aadress tuleb hoida keskkonnamuutujas, mitte kirjutada NanoOWL-i käsureale;
 - ei ole salvestanud RTSP URL-i, parooli ega privaatseid kaamerapilte avalikku hoidlasse.
 
 ## Kui tulemust ei tule
@@ -459,16 +592,18 @@ Labor on tehtud esimesel tasemel, kui:
 | `No module named aiohttp` | NanoOWL-i algsest pildist puudub veebidemo teek | loo jaotises 2 kirjeldatud kohalik paranduspilt |
 | tulemuspilt on tühi või leide pole | tekstiviip, lävi või pilt ei sobi | alanda läve näiteks `0.05` ja lihtsusta ingliskeelset tekstiviipa |
 | M9 Pro demo ei ava pilti | `/dev/video1` ei ole enam M9 Pro või kaamera on hõivatud | korda Lab 001 seadmete kontrolli ja sulge muud kaameraprogrammid |
+| `Could not open CSI camera sensor-id 0` | Argus ei pääse sensorile ligi või kaamera on hõivatud | sulge muud IMX219 programmid, kontrolli Lab 001 Arguse testi ning käivita demo uuesti |
+| `Could not open RTSP stream` | `RTSP_URL` puudub, voog ei ole H.264 või võrk ei jõua kaamerani | kontrolli muutuja sisestamist, kaamera vooteed ja sama kohtvõrku; ära kuva URL-i päevikus |
+| RTSP pilt jääb seisma | võrgu kõikumine või liiga väike puhver | proovi `--latency 500` ja kontrolli kaamera võrguühendust |
 | veebileht avaneb Jetsonis, kuid mitte teises arvutis | UFW keelab pordi 7860 või arvutid ei ole samas kohtvõrgus | kontrolli jaotise 7 UFW reeglit ning mõlema seadme võrguühendust |
-| IMX219 ei tööta `--camera 0` abil | see seade annab toor-Bayeri pildi | kasuta selles laboris IMX219 JPEG faili, mitte M9 Pro käsku |
 | veebileht ei avane teisest arvutist | kohtvõrk, tulemüür või vale Jetsoni aadress | kontrolli, et mõlemad seadmed on samas võrgus ja demo töötab Jetsonis |
 
 ## Edasine samm
 
 Kui tekstiviipadega tuvastus on arusaadav, saad valida ühe praktilise suuna:
 
-- ehitada IMX219 Arguse sisend NanoOWL-i jaoks;
-- lisada RTSP sisendadapter;
+- mõõta eri sisendite kaadrisagedust ja viivitust;
+- lisada H.265 RTSP voo tugi eraldi GStreameri toruna;
 - võrrelda NanoOWL-i ja oma andmestikul õpetatud YOLO mudelit;
 - kasutada NanoOWL-i leide olukorratuvastuse reegli sisendina.
 
