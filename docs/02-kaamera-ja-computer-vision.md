@@ -4,13 +4,13 @@
 
 Raalnägemine on kaamera või muu visuaalanduri abil saadud pildi ja video hõivamine, töötlemine ning tõlgendamine. AKITi erialasõnastikus on `computer vision` vasteks muu hulgas `raalnägemine`.
 
-Esimene siht ei ole kohe mudeliga objekte tuvastada, vaid saada kindel ja korratav toru:
+Esimene siht ei ole kohe mudeliga objekte tuvastada, vaid saada kindel ja korratav töövoog:
 
 ```text
 kaamera -> kaader -> mudel -> tulemus -> logi -> otsus
 ```
 
-Kui see toru on arusaadav, saab hiljem vahetada mudelit, lisada reegleid või panna juurde suure keelemudeli (LLM-i).
+Kui see töövoog on arusaadav, saab hiljem vahetada mudelit, lisada reegleid või panna juurde suure keelemudeli (LLM-i).
 
 ## Kolm kaameraallikat selles komplektis
 
@@ -42,7 +42,7 @@ Mida need käsud teevad:
 - kaks `--list-formats-ext` käsku näitavad vastavate seadmete toetatud vorminguid, eraldusvõimeid ja kaadrisagedusi;
 - `mkdir -p` loob kohaliku kaustaga testpiltide kogumiseks.
 
-Miks see vajalik on: IMX219 ja M9 Pro saavad töötada eri toorvormingutes. Kaamera pakutud vorming peab vastama GStreameri toru kapslitele, muidu tuleb läbirääkimisviga.
+Miks see vajalik on: IMX219 ja M9 Pro saavad töötada eri toorvormingutes. Kaamera pakutud vorming peab vastama GStreameri töövoo kapslitele, muidu tuleb läbirääkimisviga.
 
 Oodatud tulemus: tuvastad, kas IMX219 on tõesti `/dev/video0`, M9 Pro `/dev/video1`, ning millist `MJPG`, `YUYV` või muud vormingut M9 Pro pakub. Täit väljundit ära avalda, sest selles võivad olla seadme seerianumber ja muud lokaalsed andmed.
 
@@ -125,11 +125,11 @@ gst-launch-1.0 -e rtspsrc location="$RTSP_URL" protocols=tcp latency=200 ! \
 file "$HOME/jetson-camera-tests/rtsp-frame.jpg"
 ```
 
-Mida see käsurühm teeb: `rtspsrc` avab võrguvoo; TCP eelistamine aitab vältida UDP paketikaost tulenevaid häireid. Järgmised kaks elementi võtavad H.264 video RTP pakettidest välja, `nvv4l2decoder` dekodeerib selle Jetsoni riistvaraga, `jpegenc snapshot=true` lõpetab toru pärast esimese JPEG-i kodeerimist ning ülejäänud elemendid kirjutavad JPEG faili.
+Mida see käsurühm teeb: `rtspsrc` avab võrguvoo; TCP eelistamine aitab vältida UDP paketikaost tulenevaid häireid. Järgmised kaks elementi võtavad H.264 video RTP pakettidest välja, `nvv4l2decoder` dekodeerib selle Jetsoni riistvaraga, `jpegenc snapshot=true` lõpetab töövoo pärast esimese JPEG-i kodeerimist ning ülejäänud elemendid kirjutavad JPEG faili.
 
 Miks see vajalik on: kaadri salvestamine eraldab raalnägemise mudeli katse võrgukaamera pidevast ühendusest ning kasutab Jetsoni videoriistvara.
 
-Oodatud tulemus: luuakse `rtsp-frame.jpg` ja toru lõpeb. Kui kaamera kasutab H.265 või HEVC videot, asenda `rtph264depay ! h264parse` osaga `rtph265depay ! h265parse`.
+Oodatud tulemus: luuakse `rtsp-frame.jpg` ja töövoog lõpeb. Kui kaamera kasutab H.265 või HEVC videot, asenda `rtph264depay ! h264parse` osaga `rtph265depay ! h265parse`.
 
 Pärast RTSP katset eemalda muutujad:
 
@@ -190,7 +190,7 @@ DeepStream on otstarbekas siis, kui eesmärgiks on:
 - mitu kaameravoogu;
 - RTSP sisend või väljund;
 - madal latentsus;
-- tootmislaadsem toru;
+- tootmislaadsem töövoog;
 - objektide jälgimine ja metaandmed.
 
 Alguses võib see olla liiga suur amps. Tule selle juurde tagasi, kui lihtne objektituvastus töötab.

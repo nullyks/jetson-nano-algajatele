@@ -3,7 +3,7 @@
 
 The original NanoOWL tree demo opens only a numeric V4L2 camera index.
 This companion keeps its prompt protocol and browser page, but lets OpenCV
-open an NVIDIA Argus or RTSP GStreamer pipeline as well.
+open an NVIDIA Argus or RTSP GStreamer workflow as well.
 """
 
 import argparse
@@ -39,10 +39,10 @@ def parse_resolution(value: str) -> tuple[int, int]:
     return width, height
 
 
-def csi_pipeline(
+def csi_workflow(
     sensor_id: int, width: int, height: int, framerate: int
 ) -> str:
-    """Build an Argus pipeline for an NVIDIA CSI camera such as IMX219."""
+    """Build an Argus workflow for an NVIDIA CSI camera such as IMX219."""
     return (
         f"nvarguscamerasrc sensor-id={sensor_id} ! "
         f"video/x-raw(memory:NVMM),width=(int){width},height=(int){height},"
@@ -54,8 +54,8 @@ def csi_pipeline(
     )
 
 
-def rtsp_pipeline(url: str, width: int, height: int, latency: int) -> str:
-    """Build a low-latency H.264 RTSP pipeline without printing its URL."""
+def rtsp_workflow(url: str, width: int, height: int, latency: int) -> str:
+    """Build a low-latency H.264 RTSP workflow without printing its URL."""
     return (
         f"rtspsrc location={url} protocols=tcp latency={latency} ! "
         "rtph264depay ! h264parse ! nvv4l2decoder ! "
@@ -74,7 +74,7 @@ def open_camera(args: argparse.Namespace, width: int, height: int) -> cv2.VideoC
         source_description = f"V4L2 camera index {args.camera}"
     elif args.source == "csi":
         camera = cv2.VideoCapture(
-            csi_pipeline(args.sensor_id, width, height, args.framerate),
+            csi_workflow(args.sensor_id, width, height, args.framerate),
             cv2.CAP_GSTREAMER,
         )
         source_description = f"CSI camera sensor-id {args.sensor_id}"
@@ -86,7 +86,7 @@ def open_camera(args: argparse.Namespace, width: int, height: int) -> cv2.VideoC
                 "Set it in the host terminal before starting the container."
             )
         camera = cv2.VideoCapture(
-            rtsp_pipeline(rtsp_url, width, height, args.latency),
+            rtsp_workflow(rtsp_url, width, height, args.latency),
             cv2.CAP_GSTREAMER,
         )
         source_description = "RTSP stream from an environment variable"

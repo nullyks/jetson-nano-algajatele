@@ -74,7 +74,7 @@ Algaja jaoks on kaks head rada:
 Hiljem lisa:
 
 - YOLO + TensorRT;
-- DeepStream, kui on vaja mitut voogu, madalat latentsust või tootmislaadset pipeline'i;
+- DeepStream, kui on vaja mitut voogu, madalat latentsust või tootmislaadset töövoogu;
 - oma andmestik ja oma mudel.
 
 Alusta esmalt: [Lab 002: detectnet](../labs/002-esimene-objektituvastus.md)

@@ -101,4 +101,4 @@ Näide väljund:
 Kaamera tuvastas ukse juures inimese. Tuvastus on kestnud 4.2 sekundit ja kindlus on 0.87.
 ```
 
-Hiljem võib proovida VLM-e ehk vision-language mudeleid, aga algaja jaoks on parem hoida esimene pipeline lihtne ja mooduliteks jaotatud.
+Hiljem võib proovida VLM-e ehk vision-language mudeleid, aga algaja jaoks on parem hoida esimene töövoog lihtne ja mooduliteks jaotatud.

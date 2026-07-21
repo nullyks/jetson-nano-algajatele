@@ -66,6 +66,7 @@ Kontrollitud: 2026-07-19.
 
 - püsivara (*firmware*): seadmes püsivalt talletatud tarkvara; õppetükis nimetatakse selle numbrilist tähistust püsivara versiooniks;
 - konteinerpakett või Dockeri kettatõmmis (*Docker image*): konteineri käivitamiseks vajalik Dockeri pakendatud tõmmis.
+- töövoog (*pipeline*): järjestikku ühendatud tööriistade kogum, kus iga etapi väljund on järgmise etapi sisend.
 
 ## Praegune versioonipilt
 
@@ -77,5 +78,5 @@ Kontrollitud: 2026-07-19.
 - Ubuntu `unattended-upgrades` sobib Ubuntu turvauuenduste automaatseks paigaldamiseks, kuid kolmanda osapoole ja NVIDIA repod tuleb käsitleda teadlikult.
 - Jetson AI Lab on hea praktiliste generatiivse AI juhendite koht. Ollama juhend märgib, et Ollamal on Jetsoni CUDA tugi ja see on lihtne sissepääs kohalike LLM-ide jooksutamiseks.
 - NanoOWL juhend on hea rada avatud sõnavaraga objektituvastuse katsetamiseks, kuid selle juhendis on JetPacki toena kirjas JetPack 5/6. JetPack 7.x puhul kontrolli enne ühilduvust.
-- DeepStream on kasulik siis, kui liigud mitme videovoo, tootmislaadse pipeline'i või parema voogedastuse juurde. NVIDIA DeepStreami dokumentatsioon soovitab uutele kasutajatele kiireks alustamiseks Dockerit.
+- DeepStream on kasulik siis, kui liigud mitme videovoo, tootmislaadse töövoo või parema voogedastuse juurde. NVIDIA DeepStreami dokumentatsioon soovitab uutele kasutajatele kiireks alustamiseks Dockerit.
 - Edasimüüja kettatõmmise puhul salvesta enne uuendamist algseis, kontrolli kasutajakontosid, APT allikaid ja avatud teenuseid ning hoia taastamisjuhend alles.

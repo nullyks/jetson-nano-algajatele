@@ -439,7 +439,7 @@ Miks see vajalik on: USB-kaamera annab juba OpenCV-le sobiva videovoo. `--camera
 
 ### 7.4 IMX219 CSI-kaamera otsevoog
 
-Ära kasuta IMX219 puhul M9 Pro `--source v4l2 --camera 0` käsku. Selles komplektis on `/dev/video0` Bayeri toorandmestik. `--source csi` valib selle asemel NVIDIA Arguse kaamerateenuse ja GStreameri toru.
+Ära kasuta IMX219 puhul M9 Pro `--source v4l2 --camera 0` käsku. Selles komplektis on `/dev/video0` Bayeri toorandmestik. `--source csi` valib selle asemel NVIDIA Arguse kaamerateenuse ja GStreameri töövoo.
 
 ```bash
 # Käivita NanoOWL-i veebidemo IMX219 CSI-kaameraga.
@@ -511,7 +511,7 @@ jetson-containers run \
 
 Mida see käsk teeb: GStreamer avab keskkonnamuutujas oleva RTSP voo TCP kaudu, NVIDIA videodekooder teeb H.264 kaadri BGR-vormingusse ning NanoOWL saadab tuvastustulemuse veebilehele.
 
-Miks see vajalik on: RTSP ei ole Jetsoni kohalik kaameraindeks. GStreameri toru eraldab võrguühenduse, videodekodeerimise ja mudeli sisendi.
+Miks see vajalik on: RTSP ei ole Jetsoni kohalik kaameraindeks. GStreameri töövoog eraldab võrguühenduse, videodekodeerimise ja mudeli sisendi.
 
 Pärast demo peatamist klahvidega `Ctrl+C` eemalda RTSP andmed praegusest terminaliseansist.
 
@@ -598,7 +598,7 @@ Labor on tehtud esimesel tasemel, kui:
 Kui tekstiviipadega tuvastus on arusaadav, saad valida ühe praktilise suuna:
 
 - mõõta eri sisendite kaadrisagedust ja viivitust;
-- lisada H.265 RTSP voo tugi eraldi GStreameri toruna;
+- lisada H.265 RTSP voo tugi eraldi GStreameri töövoona;
 - võrrelda NanoOWL-i ja oma andmestikul õpetatud YOLO mudelit;
 - kasutada NanoOWL-i leide olukorratuvastuse reegli sisendina.
 

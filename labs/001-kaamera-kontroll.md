@@ -81,9 +81,9 @@ v4l2-ctl --device=/dev/video0 --list-formats-ext
 
 Mida see käsk teeb: kuvab seadme toetatud piksli vormingud, eraldusvõimed ja kaadrisagedused.
 
-Miks see vajalik on: ainult toetatud vormingut kasutav GStreameri toru saab kokkulepitud pildi kätte.
+Miks see vajalik on: ainult toetatud vormingut kasutav GStreameri töövoog saab kokkulepitud pildi kätte.
 
-Oodatud tulemus: sinu IMX219 puhul on `/dev/video0` vorming `RG10` ehk 10-bitine Bayeri toorandmestik. See ei ole veel tavapärane värvipilt, mistõttu käsk `v4l2src ! videoconvert ! jpegenc` lõpeb vorminguläbirääkimise veaga `not-negotiated`. Ära seda toru selle kaamera jaoks kasuta.
+Oodatud tulemus: sinu IMX219 puhul on `/dev/video0` vorming `RG10` ehk 10-bitine Bayeri toorandmestik. See ei ole veel tavapärane värvipilt, mistõttu käsk `v4l2src ! videoconvert ! jpegenc` lõpeb vorminguläbirääkimise veaga `not-negotiated`. Ära seda töövoogu selle kaamera jaoks kasuta.
 
 Kasuta selle asemel NVIDIA Arguse kaamerapluginat:
 
@@ -186,7 +186,7 @@ Mida see käsk teeb:
 
 Miks see vajalik on: enne pildi salvestamist eristad sellega võrgu, autentimise ja videokodeki probleemi failikirjutamise probleemist.
 
-Oodatud tulemus: käsk jääb videot vastu võtma. Peata test klahvidega `Ctrl+C`. Kui kaamera dokumentatsioon või turvaliselt kontrollitud tehniline teave näitab `H265` või `HEVC` videot, asenda torus `rtph264depay ! h264parse` osaga `rtph265depay ! h265parse`. Ära kopeeri RTSP käsu täit veaväljundit avalikku materjali, sest see võib sisaldada ühenduse aadressi.
+Oodatud tulemus: käsk jääb videot vastu võtma. Peata test klahvidega `Ctrl+C`. Kui kaamera dokumentatsioon või turvaliselt kontrollitud tehniline teave näitab `H265` või `HEVC` videot, asenda töövoos `rtph264depay ! h264parse` osaga `rtph265depay ! h265parse`. Ära kopeeri RTSP käsu täit veaväljundit avalikku materjali, sest see võib sisaldada ühenduse aadressi.
 
 Salvesta H.264 voost üks kaader:
 
@@ -197,11 +197,11 @@ gst-launch-1.0 -e rtspsrc location="$RTSP_URL" protocols=tcp latency=200 ! \
   filesink location="$HOME/jetson-camera-tests/rtsp-frame.jpg"
 ```
 
-Mida see käsk teeb: RTSP voog depakendatakse ja dekodeeritakse Jetsoni riistvaraga, `nvvidconv` teisendab kaadri JPEG kodeerijale sobivaks, `jpegenc snapshot=true` lõpetab toru pärast esimese JPEG-i kodeerimist ning `filesink` kirjutab kohaliku pildifaili.
+Mida see käsk teeb: RTSP voog depakendatakse ja dekodeeritakse Jetsoni riistvaraga, `nvvidconv` teisendab kaadri JPEG kodeerijale sobivaks, `jpegenc snapshot=true` lõpetab töövoo pärast esimese JPEG-i kodeerimist ning `filesink` kirjutab kohaliku pildifaili.
 
 Miks see vajalik on: sama pildifaili saab hiljem kasutada raalnägemismudeli sisendina ilma võrgukaamerat iga katse ajal uuesti avamata.
 
-Oodatud tulemus: pärast esimese täieliku videokaadri saabumist luuakse fail `rtsp-frame.jpg` ja toru lõpeb ise. Kontrolli tulemust käsuga `file "$HOME/jetson-camera-tests/rtsp-frame.jpg"`.
+Oodatud tulemus: pärast esimese täieliku videokaadri saabumist luuakse fail `rtsp-frame.jpg` ja töövoog lõpeb ise. Kontrolli tulemust käsuga `file "$HOME/jetson-camera-tests/rtsp-frame.jpg"`.
 
 Pärast testi eemalda tundlikud muutujad praegusest terminaliseansist:
 
