@@ -168,6 +168,16 @@ Oodatud tulemus: kuvatakse `detectnet` abi. Kui faili ei leita, on konteineri lo
 
 Alusta projekti enda näidispildiga. See ei sõltu sinu kaamerast ega võrgust ning kontrollib mudeli töövalmidust.
 
+### Mida mudelilt oodata
+
+Selles laboris kasutatav `ssd-mobilenet-v2` on üldotstarbeline objektituvastusmudel. See on õpetatud MS COCO andmestikul ja saab tagastada ainult selle andmestiku **91 klassi** nimetusi. Nende seas on näiteks inimesed, sõidukid, loomad ja osa tavapäraseid esemeid.
+
+Enne oma pildi katsetamist vaata [SSD-Mobilenet-v2 ametlikku COCO klasside loetelu](https://github.com/dusty-nv/jetson-inference/blob/master/data/networks/ssd_coco_labels.txt). Kui sinu ese selles loetelus puudub, näiteks konkreetne aiatööriist, ei saa mudel seda selle õige nimetusega tuvastada. Mudel võib pakkuda kõige sarnasemat talle tuntud klassi või mitte midagi leida.
+
+Ka loetelus oleva klassi olemasolu ei taga õiget tulemust. Vaatepunkt, valgustus, kaugus, katmine ja objekti suurus mõjutavad tulemust. Näiteks `person` mudel töötab tavaliselt paremini tervikliku inimese kui väga lähedalt kaadris oleva näo korral; see mudel ei ole eraldi näotuvastaja.
+
+Kasuta kindlust tõlgendamisel: 50% leid on ebakindel hüpotees, mitte kinnitatud fakt. Võrdle sama pilti eri lävedega, näiteks `--threshold=0.30` ja `--threshold=0.70`, ning kirjuta valeleid päevikusse. Valeleid on õppimismaterjal, sest see näitab mudeli tegelikke piire.
+
 ```bash
 # Ole kompileeritud programmide kaustas.
 cd /jetson-inference/build/aarch64/bin
