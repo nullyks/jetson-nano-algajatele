@@ -3,15 +3,15 @@
 ## Mida õpid
 
 - Kontrollid, milline videoseade vastab millisele kaamerale.
-- Salvestad ühe kaadri IMX219, USB veebikaamera ja IP/RTSP kaamera voost.
+- Salvestad ühe kaadri CSI kaamera, USB kaamera ja IP/RTSP kaamera voost.
 - Eristad V4L2 seadet, CSI/Arguse kaamerat ja RTSP võrguvoogu.
 - Hoidud kaamera kasutajanime, parooli ja piltide kogemata avalikustamisest.
 
 ## Eeldused
 
 - Jetson käivitub ja saad selles terminali avada.
-- IMX219 on ühendatud ning sinu seadmes ilmub see eeldatavalt seadmena `/dev/video0`.
-- USB veebikaamera M9 Pro on ühendatud ning sinu seadmes ilmub see eeldatavalt seadmena `/dev/video1`.
+- CSI kaamera on ühendatud ning sinu seadmes ilmub see eeldatavalt seadmena `/dev/video0`.
+- USB kaamera on ühendatud ning sinu seadmes ilmub see eeldatavalt seadmena `/dev/video1`.
 - IP-kaamera RTSP voog on samast võrgust kättesaadav.
 
 Videoseadmete numbrid ei ole püsivad. USB seadmete lisamine, eemaldamine või käivitusjärjekord võib muuta, milline kaamera on `/dev/video0` ja milline `/dev/video1`. Seepärast kontrolli seost iga uue seadistuse järel, mitte ära usalda ainult numbrit.
@@ -65,13 +65,13 @@ Mida need käsud teevad:
 - `v4l2-ctl --list-devices` rühmitab videoseadmed kaamera või draiveri nime järgi.
 - kaks `--all` käsku näitavad vastavalt seadmete `/dev/video0` ja `/dev/video1` omadusi.
 
-Miks see vajalik on: nii kinnitad, et IMX219 ja M9 Pro on õigete seadmenumbritega seotud. Mõni kaamera või kodeerimisplokk võib luua lisaks veel videoseadmeid.
+Miks see vajalik on: nii kinnitad, et CSI kaamera ja USB kaamera on õigete seadmenumbritega seotud. Mõni kaamera või kodeerimisplokk võib luua lisaks veel videoseadmeid.
 
-Oodatud tulemus: sinu seadmes peaks IMX219 olema seotud `/dev/video0` ja M9 Pro `/dev/video1` seadmega. Kui nimed või numbrid erinevad, kasuta järgmistes käskudes `v4l2-ctl --list-devices` tulemusest leitud õiget seadet.
+Oodatud tulemus: sinu seadmes peaks CSI kaamera olema seotud `/dev/video0` ja USB kaamera `/dev/video1` seadmega. Kui nimed või numbrid erinevad, kasuta järgmistes käskudes `v4l2-ctl --list-devices` tulemusest leitud õiget seadet.
 
-Kontrollküsimus: kas tead, milline kaamera vastab sinu seadmes igale videoseadmele, näiteks `IMX219 -> /dev/video0`? Ära lisa täit `v4l2-ctl --all` väljundit avalikku reposse, sest see võib sisaldada seadme seerianumbrit.
+Kontrollküsimus: kas tead, milline kaamera vastab sinu seadmes igale videoseadmele, näiteks `CSI kaamera -> /dev/video0`? Ära lisa täit `v4l2-ctl --all` väljundit avalikku reposse, sest see võib sisaldada seadme seerianumbrit.
 
-## Samm 3: IMX219 kaader, kui `/dev/video0` annab `RG10` Bayeri toorandmed
+## Samm 3: CSI kaamera kaader, kui `/dev/video0` annab `RG10` Bayeri toorandmed
 
 Kõigepealt vaata, milliseid vorminguid kaamera pakub:
 
@@ -83,7 +83,7 @@ Mida see käsk teeb: kuvab seadme toetatud piksli vormingud, eraldusvõimed ja k
 
 Miks see vajalik on: ainult toetatud vormingut kasutav GStreameri töövoog saab kokkulepitud pildi kätte.
 
-Oodatud tulemus: sinu IMX219 puhul on `/dev/video0` vorming `RG10` ehk 10-bitine Bayeri toorandmestik. See ei ole veel tavapärane värvipilt, mistõttu käsk `v4l2src ! videoconvert ! jpegenc` lõpeb vorminguläbirääkimise veaga `not-negotiated`. Ära seda töövoogu selle kaamera jaoks kasuta.
+Oodatud tulemus: sinu CSI kaamera puhul on `/dev/video0` vorming `RG10` ehk 10-bitine Bayeri toorandmestik. See ei ole veel tavapärane värvipilt, mistõttu käsk `v4l2src ! videoconvert ! jpegenc` lõpeb vorminguläbirääkimise veaga `not-negotiated`. Ära seda töövoogu selle kaamera jaoks kasuta.
 
 Kasuta selle asemel NVIDIA Arguse kaamerapluginat:
 
@@ -95,27 +95,27 @@ gst-launch-1.0 -e nvarguscamerasrc sensor-id=0 num-buffers=1 ! \
   filesink location="$HOME/jetson-camera-tests/imx219-argus.jpg"
 ```
 
-Mida see käsurühm teeb: esimene käsk kontrollib, kas NVIDIA Arguse kaameraelement on paigaldatud. Teine loeb IMX219 Bayeri kaadri Arguse kaudu, teeb vajalikud kaamera- ja värviteisendused, kodeerib esimese kaadri JPEG-na ning salvestab selle faili.
+Mida see käsurühm teeb: esimene käsk kontrollib, kas NVIDIA Arguse kaameraelement on paigaldatud. Teine loeb CSI kaamera Bayeri kaadri Arguse kaudu, teeb vajalikud kaamera- ja värviteisendused, kodeerib esimese kaadri JPEG-na ning salvestab selle faili.
 
-Miks see vajalik on: mõnes Jetsoni seadistuses jõuab CSI/IMX219 kaamera GStreamerisse Arguse, mitte `/dev/video*` kaudu.
+Miks see vajalik on: mõnes Jetsoni seadistuses jõuab CSI kaamera GStreamerisse Arguse, mitte `/dev/video*` kaudu.
 
-Oodatud tulemus: `gst-inspect-1.0` näitab `nvarguscamerasrc` andmeid ning teine käsk loob faili `imx219-argus.jpg`. See rada on selle IMX219 seadistusega läbi proovitud. Kui esimene käsk ütleb, et elementi ei leitud, ära paigalda juhuslikku pluginat; kontrolli JetPacki ja kaamera draiverit.
+Oodatud tulemus: `gst-inspect-1.0` näitab `nvarguscamerasrc` andmeid ning teine käsk loob faili `imx219-argus.jpg`. See rada on selle CSI kaamera seadistusega läbi proovitud. Kui esimene käsk ütleb, et elementi ei leitud, ära paigalda juhuslikku pluginat; kontrolli JetPacki ja kaamera draiverit.
 
-## Samm 4: USB veebikaamera M9 Pro kaader seadmest `/dev/video1`
+## Samm 4: USB kaamera kaader seadmest `/dev/video1`
 
-Kontrolli esmalt M9 Pro tegelikke vorminguid:
+Kontrolli esmalt USB kaamera tegelikke vorminguid:
 
 ```bash
 v4l2-ctl --device=/dev/video1 --list-formats-ext
 ```
 
-Mida see käsk teeb: kuvab M9 Pro pakutavad vormingud, näiteks `MJPG` või `YUYV`, ning nende lubatud eraldusvõimed ja kaadrisagedused.
+Mida see käsk teeb: kuvab USB kaamera pakutavad vormingud, näiteks `MJPG` või `YUYV`, ning nende lubatud eraldusvõimed ja kaadrisagedused.
 
-Miks see vajalik on: USB veebikaamerad pakuvad tihti mitut vormingut. Sobimatu vorming, eraldusvõime või kaadrisagedus annab GStreameris läbirääkimisvea.
+Miks see vajalik on: USB kaamerad pakuvad tihti mitut vormingut. Sobimatu vorming, eraldusvõime või kaadrisagedus annab GStreameris läbirääkimisvea.
 
 Oodatud tulemus: vali üks loetletud vorming ja kasuta täpselt selle juurde kuuluvat laiust, kõrgust ning kaadrisagedust järgmises käsus.
 
-Selles M9 Pro seadistuses on `MJPG` vorminguga saadaval 1920×1080 ja 30 fps. Salvesta kaader nii:
+Selles USB kaamera seadistuses on `MJPG` vorminguga saadaval 1920×1080 ja 30 fps. Salvesta kaader nii:
 
 ```bash
 gst-launch-1.0 -e v4l2src device=/dev/video1 num-buffers=1 ! \
@@ -124,11 +124,11 @@ gst-launch-1.0 -e v4l2src device=/dev/video1 num-buffers=1 ! \
 file "$HOME/jetson-camera-tests/m9-pro-mjpg.jpg"
 ```
 
-Mida see käsurühm teeb: `v4l2src` loeb M9 Pro ühe kaadri, JPEG kapsel kirjeldab MJPEG vormingut, `jpegparse` korrastab JPEG voo ning `filesink` kirjutab pildi faili.
+Mida see käsurühm teeb: `v4l2src` loeb USB kaamerast ühe kaadri, JPEG kapsel kirjeldab MJPEG vormingut, `jpegparse` korrastab JPEG voo ning `filesink` kirjutab pildi faili.
 
 Miks see vajalik on: MJPEG korral on kaamera kaader juba JPEG kujul, mistõttu pole seda vaja enne salvestamist lahti kodeerida.
 
-Oodatud tulemus: loodud fail on JPEG pilt. See 1920×1080 ja 30 fps näide on selle M9 Pro seadistusega läbi proovitud. Kui GStreamer teatab teises seadistuses, et kapslid ei sobi, kontrolli uuesti `--list-formats-ext` väljundit ja asenda näite parameetrid kaamera tegelike väärtustega.
+Oodatud tulemus: loodud fail on JPEG pilt. See 1920×1080 ja 30 fps näide on selle USB kaamera seadistusega läbi proovitud. Kui GStreamer teatab teises seadistuses, et kapslid ei sobi, kontrolli uuesti `--list-formats-ext` väljundit ja asenda näite parameetrid kaamera tegelike väärtustega.
 
 Kui loendis on `YUYV`, kasuta selle vormingu jaoks seda varianti:
 
@@ -140,11 +140,11 @@ gst-launch-1.0 -e v4l2src device=/dev/video1 num-buffers=1 ! \
 file "$HOME/jetson-camera-tests/m9-pro-yuyv.jpg"
 ```
 
-Mida see käsurühm teeb: M9 Pro annab ühe pakkimata YUYV kaadri, `videoconvert` teisendab selle JPEG kodeerijale sobivaks ning `jpegenc` salvestab pildi JPEG-na.
+Mida see käsurühm teeb: USB kaamera annab ühe pakkimata YUYV kaadri, `videoconvert` teisendab selle JPEG kodeerijale sobivaks ning `jpegenc` salvestab pildi JPEG-na.
 
 Miks see vajalik on: pakkimata YUYV ei ole valmis pildifail; see tuleb enne faili salvestamist kodeerida.
 
-Oodatud tulemus: loodud fail on JPEG pilt. Ka siin peavad eraldusvõime ja kaadrisagedus vastama M9 Pro tegelikule vorminguloendile.
+Oodatud tulemus: loodud fail on JPEG pilt. Ka siin peavad eraldusvõime ja kaadrisagedus vastama USB kaamera tegelikule vorminguloendile.
 
 ## Samm 5: IP/RTSP kaamerast kaader
 
@@ -219,9 +219,9 @@ RTSP kaamerale kasuta võimaluse korral eraldi piiratud õigustega kasutajakonto
 
 ## Kontrollküsimused
 
-- Kas tead IMX219 videoseadet ning kas sellest salvestati kaader?
-- Kas tead M9 Pro videoseadet ja selle vormingut, näiteks MJPG, YUYV või muu?
-- Kas M9 Pro kaader salvestati?
+- Kas tead CSI kaamera videoseadet ning kas sellest salvestati kaader?
+- Kas tead USB kaamera videoseadet ja selle vormingut, näiteks MJPG, YUYV või muu?
+- Kas USB kaamera kaader salvestati?
 - Kas tead RTSP voo kodekit, näiteks H.264, H.265 või muud, ning kas sellest salvestati kaader?
 - Kui midagi ei töötanud, kas tead, millise järgmise kontrolli teha?
 
@@ -229,9 +229,9 @@ RTSP kaamerale kasuta võimaluse korral eraldi piiratud õigustega kasutajakonto
 
 Kontrolli:
 
-- kas IMX219 lintkaabel on õigetpidi ja kaamera on Jetsoni poolt toetatud;
+- kas CSI kaamera lintkaabel on õigetpidi ja kaamera on Jetsoni poolt toetatud;
 - kas `/dev/video0` ja `/dev/video1` seos vastab tegelikule kaamerale;
-- kas USB veebikaamera vorming, eraldusvõime ja kaadrisagedus pärinevad `v4l2-ctl --list-formats-ext` väljundist;
+- kas USB kaamera vorming, eraldusvõime ja kaadrisagedus pärinevad `v4l2-ctl --list-formats-ext` väljundist;
 - kas RTSP voog on H.264 või H.265 ning kas kasutad sellele vastavat depakendajat;
 - kas Jetson ja IP-kaamera on samas usaldatud võrgus;
 - kas RTSP kasutajal on selle voo lugemise õigus.

@@ -42,7 +42,7 @@ def parse_resolution(value: str) -> tuple[int, int]:
 def csi_workflow(
     sensor_id: int, width: int, height: int, framerate: int
 ) -> str:
-    """Build an Argus workflow for an NVIDIA CSI camera such as IMX219."""
+    """Build an Argus workflow for an NVIDIA CSI camera."""
     return (
         f"nvarguscamerasrc sensor-id={sensor_id} ! "
         f"video/x-raw(memory:NVMM),width=(int){width},height=(int){height},"

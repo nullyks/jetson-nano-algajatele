@@ -2,7 +2,7 @@
 
 ## Eesmärk
 
-Selles laboris kasutad `jetson-inference` programmi `detectnet`, et tuvastada objekte projekti näidispildil, seejärel IMX219 CSI-kaamera, M9 Pro USB veebikaamera ja IP-kaamera pildil ning lõpuks nende reaalajavoos.
+Selles laboris kasutad `jetson-inference` programmi `detectnet`, et tuvastada objekte projekti näidispildil, seejärel CSI kaamera, USB kaamera ja IP-kaamera pildil ning lõpuks nende reaalajavoos.
 
 ```text
 kontrollpilt -> oma kaamera pilt -> kaamera reaalajavoog
@@ -10,17 +10,17 @@ kontrollpilt -> oma kaamera pilt -> kaamera reaalajavoog
 
 | Kaamera | Lab 001 pildifail | `detectnet`-i reaalajasisend |
 | --- | --- | --- |
-| IMX219 CSI-kaamera | `imx219-argus.jpg` | `csi://0` |
-| M9 Pro USB veebikaamera | `m9-pro-mjpg.jpg` | `/dev/video1` |
+| CSI kaamera | `imx219-argus.jpg` | `csi://0` |
+| USB kaamera | `m9-pro-mjpg.jpg` | `/dev/video1` |
 | IP-kaamera | `rtsp-frame.jpg` | RTSP URL muutujas `RTSP_URL` |
 
-**Oluline:** IMX219 on selles seadistuses nähtav ka seadmena `/dev/video0`, kuid sealt tuleb Bayeri toorandmestik. `jetson-inference`-is kasuta IMX219 jaoks alati `csi://0`, mitte `/dev/video0`. M9 Pro USB-kaamera on siin `/dev/video1`.
+**Oluline:** CSI kaamera on selles seadistuses nähtav ka seadmena `/dev/video0`, kuid sealt tuleb Bayeri toorandmestik. `jetson-inference`-is kasuta CSI kaamera jaoks alati `csi://0`, mitte `/dev/video0`. USB kaamera on siin `/dev/video1`.
 
 ## Mida õpid
 
 - mis on objektituvastus ning mida tähendavad klass, piirkond ja kindlus;
 - kuidas avada `jetson-inference` konteiner;
-- kuidas anda samale mudelile pildifail, CSI-kaamera, USB-kaamera ja RTSP voog;
+- kuidas anda samale mudelile pildifail, CSI kaamera, USB kaamera ja RTSP voog;
 - miks tuleb iga kaameraga alustada pildifaili kontrollist;
 - kuidas hoida RTSP ühendusandmed GitHubist ja käsuajaloost eemal.
 
@@ -54,7 +54,7 @@ cat /etc/nv_tegra_release
 # Eduka tulemuse korral näed nii kliendi kui ka serveri teavet.
 docker version
 
-# Näita Lab 001-s kasutatud CSI- ja USB-kaamera seadmefaile.
+# Näita Lab 001-s kasutatud CSI kaamera ja USB kaamera seadmefaile.
 ls -l /dev/video0 /dev/video1
 
 # Näita kohalikke testpilte. Puuduva pildi korral korda selle kaamera Lab 001 testi.
@@ -103,7 +103,7 @@ cd ~/jetson-inference
 ./docker/run.sh --volume "$HOME/jetson-camera-tests:/camera-tests"
 ```
 
-Mida see käsk teeb: konteineriskript annab konteinerile GPU, videoseadmete ja CSI-kaamera Arguse pesa kasutusõiguse. `--volume` teeb Lab 001 pildid konteineris nähtavaks teel `/camera-tests`.
+Mida see käsk teeb: konteineriskript annab konteinerile GPU, videoseadmete ja CSI kaamera Arguse pesa kasutusõiguse. `--volume` teeb Lab 001 pildid konteineris nähtavaks teel `/camera-tests`.
 
 Miks see vajalik on: konteineril on oma failisüsteem. Ilma kausta sidumata ei näeks `detectnet` kohalikke testpilte.
 
@@ -150,7 +150,7 @@ cd /jetson-inference/build/aarch64/bin
 
 Mida käsud teevad: esimene liigub programmi juurde. Teine näitab näiteks parameetreid `--network`, `--threshold`, `--overlay` ning sisendi ja väljundi URI-sid.
 
-Miks see vajalik on: kasutame sama programmi JPEG pildi, CSI-kaamera, USB-kaamera ja RTSP voo jaoks. Muutub ainult sisend.
+Miks see vajalik on: kasutame sama programmi JPEG pildi, CSI kaamera, USB kaamera ja RTSP voo jaoks. Muutub ainult sisend.
 
 Oodatud tulemus: kuvatakse `detectnet` abi. Kui faili ei leita, on konteineri loomine või selle pildi sobivus pooleli. Ära jätka enne, kui abikäsk töötab.
 
@@ -200,28 +200,28 @@ Oodatud tulemus: terminalis on leitud objektid ja fail `images/test/peds_0-detec
 
 | Sisend näites | Mida `detectnet` tegelikult kasutab | Kas kaamera avaneb? |
 | --- | --- | --- |
-| `/camera-tests/imx219-argus.jpg` | varem IMX219-st salvestatud JPEG fail | Ei |
-| `/camera-tests/m9-pro-mjpg.jpg` | varem M9 Pro-st salvestatud JPEG fail | Ei |
+| `/camera-tests/imx219-argus.jpg` | varem CSI kaamerast salvestatud JPEG fail | Ei |
+| `/camera-tests/m9-pro-mjpg.jpg` | varem USB kaamerast salvestatud JPEG fail | Ei |
 | `/camera-tests/rtsp-frame.jpg` | varem RTSP voost salvestatud JPEG fail | Ei |
-| `csi://0` | esimene CSI-kaamera reaalajas | Jah |
-| `/dev/video1` | USB-kaamera reaalajas | Jah |
+| `csi://0` | esimene CSI kaamera reaalajas | Jah |
+| `/dev/video1` | USB kaamera reaalajas | Jah |
 | `"$RTSP_URL"` | IP-kaamera RTSP voog reaalajas | Jah |
 
-Näiteks tee `/camera-tests/imx219-argus.jpg` **ei vali IMX219 kaamerat**. See on ainult failinimi. Pilt loodi varem [Lab 001](001-kaamera-kontroll.md) käsuga, kus IMX219 valiti Arguse kaudu `sensor-id=0`. Kui USB-kaamera on nüüd ühendatud või lahti ühendatud, töötleb `detectnet` ikkagi sama juba salvestatud JPEG faili.
+Näiteks tee `/camera-tests/imx219-argus.jpg` **ei vali CSI kaamerat**. See on ainult failinimi. Pilt loodi varem [Lab 001](001-kaamera-kontroll.md) käsuga, kus CSI kaamera valiti Arguse kaudu `sensor-id=0`. Kui USB kaamera on nüüd ühendatud või lahti ühendatud, töötleb `detectnet` ikkagi sama juba salvestatud JPEG faili.
 
 See on tahtlik töökorraldus: esmalt veendu, et mudel suudab ühe pildi töödelda; alles hiljem ava sama kaamera reaalajavoona. Nii on näha, kas probleem on mudelis või kaamera ühenduses.
 
-Failinimi üksi ei tõesta pildi päritolu. Kui tahad olla IMX219 pildis kindel, tee Lab 001 abil uus kaader, näiteks kaetud objektiivi või äratuntava esemega, ning töötle seda värsket faili.
+Failinimi üksi ei tõesta pildi päritolu. Kui tahad olla CSI kaamera pildis kindel, tee Lab 001 abil uus kaader, näiteks kaetud objektiivi või äratuntava esemega, ning töötle seda värsket faili.
 
 ## 6. Sama käsk varem tehtud kaamerapildiga
 
 Selle jaotise kõik käsud töötlevad **varem tehtud JPEG pilti**. Nad ei ava praegu ühtegi kaamerat. Lab 001 JPEG failid on konteineris nähtavad teel `/camera-tests`, sest konteiner avati `--volume "$HOME/jetson-camera-tests:/camera-tests"` valikuga. Vali üks järgmistest käskudest korraga.
 
-### IMX219 CSI-kaamera pilt
+### CSI kaamera pilt
 
 ```bash
-# Sisend on juba olemasolev JPEG fail, mitte IMX219 reaalajakaamera.
-# Selle pildi lõi Lab 001 varem Arguse kaudu IMX219-st.
+# Sisend on juba olemasolev JPEG fail, mitte CSI kaamera reaalajavoog.
+# Selle pildi lõi Lab 001 varem Arguse kaudu CSI kaamerast.
 # Väljund jääb samasse kohalikku kausta ja ei lähe GitHubi hoidlasse.
 ./detectnet \
   --network=ssd-mobilenet-v2 \
@@ -234,17 +234,17 @@ Selle jaotise kõik käsud töötlevad **varem tehtud JPEG pilti**. Nad ei ava p
 file /camera-tests/imx219-argus-detect.jpg
 ```
 
-Mida see käsurühm teeb: töötleb IMX219 ühe kaadri ning lisab sellele mudeli leiud.
+Mida see käsurühm teeb: töötleb CSI kaamera ühe kaadri ning lisab sellele mudeli leiud.
 
-Miks see vajalik on: enne CSI reaalajavoo avamist kinnitad, et IMX219 pilt jõuab mudelisse õige värvi ja mõõtmetega.
+Miks see vajalik on: enne CSI reaalajavoo avamist kinnitad, et CSI kaamera pilt jõuab mudelisse õige värvi ja mõõtmetega.
 
 Oodatud tulemus: `imx219-argus-detect.jpg` on loetav JPEG. Kui kaadris on COCO mudelile tuttav objekt, näed selle ümber kasti.
 
-### M9 Pro USB veebikaamera pilt
+### USB kaamera pilt
 
 ```bash
-# Sisend on juba olemasolev JPEG fail, mitte M9 Pro reaalajakaamera.
-# Selle pildi lõi Lab 001 varem USB-kaamera MJPEG kaadrist.
+# Sisend on juba olemasolev JPEG fail, mitte USB kaamera reaalajavoog.
+# Selle pildi lõi Lab 001 varem USB kaamera MJPEG kaadrist.
 ./detectnet \
   --network=ssd-mobilenet-v2 \
   --threshold=0.50 \
@@ -256,11 +256,11 @@ Oodatud tulemus: `imx219-argus-detect.jpg` on loetav JPEG. Kui kaadris on COCO m
 file /camera-tests/m9-pro-mjpg-detect.jpg
 ```
 
-Mida see käsurühm teeb: loeb USB veebikaamera varem salvestatud pildi ning lisab sellele mudeli leiud.
+Mida see käsurühm teeb: loeb USB kaamerast varem salvestatud pildi ning lisab sellele mudeli leiud.
 
-Miks see vajalik on: nüüd saab sama objekti tuvastust võrrelda CSI- ja USB-kaamera pildil.
+Miks see vajalik on: nüüd saab sama objekti tuvastust võrrelda CSI kaamera ja USB kaamera pildil.
 
-Oodatud tulemus: `m9-pro-mjpg-detect.jpg` on loetav JPEG. Võrdle IMX219 tulemusega pildi teravust, kindlusi ja valeleidude arvu.
+Oodatud tulemus: `m9-pro-mjpg-detect.jpg` on loetav JPEG. Võrdle CSI kaamera tulemusega pildi teravust, kindlusi ja valeleidude arvu.
 
 ### IP-kaamera RTSP pilt
 
@@ -308,13 +308,13 @@ Miks see vajalik on: lävi on teadlik kompromiss. Madal lävi püüab rohkem võ
 
 Oodatud tulemus: 30% tulemuses on tavaliselt rohkem kaste kui 70% tulemuses. Tee kindlaks vähemalt üks kadunud leid või valepositiivne leid.
 
-## 7. IMX219 reaalajavoog
+## 7. CSI kaamera reaalajavoog
 
 Tee see katse Jetsoniga ühendatud ekraanil. Peata programm terminalis klahvidega `Ctrl+C`.
 
 ```bash
-# Ava esimene CSI-kaamera Jetsoni CSI/ISP tee kaudu.
-# csi://0 tähendab esimest CSI-kaamerat, mitte Linuxi seadet /dev/video0.
+# Ava esimene CSI kaamera Jetsoni CSI/ISP tee kaudu.
+# csi://0 tähendab esimest CSI kaamerat, mitte Linuxi seadet /dev/video0.
 # Väljundi URI puudumisel avab programm tulemuse Jetsoni ekraaniaknas.
 ./detectnet \
   --network=ssd-mobilenet-v2 \
@@ -323,9 +323,9 @@ Tee see katse Jetsoniga ühendatud ekraanil. Peata programm terminalis klahvideg
   csi://0
 ```
 
-Mida see käsk teeb: loeb IMX219 kaamerapildi CSI- ja ISP tee kaudu, tuvastab igas kaadris objektid ning joonistab leiud ekraanile.
+Mida see käsk teeb: loeb CSI kaamerapildi CSI- ja ISP tee kaudu, tuvastab igas kaadris objektid ning joonistab leiud ekraanile.
 
-Miks see vajalik on: IMX219 V4L2 seade `/dev/video0` annab selles komplektis `RG10` Bayeri toorandmeid. `csi://0` kasutab selle kaamera õigeks pilditöötluseks Jetsoni CSI/ISP teed.
+Miks see vajalik on: CSI kaamera V4L2 seade `/dev/video0` annab selles komplektis `RG10` Bayeri toorandmeid. `csi://0` kasutab selle kaamera õigeks pilditöötluseks Jetsoni CSI/ISP teed.
 
 Oodatud tulemus: avaneb videoaken kastide, klassinimede ja kindlustega. Terminalis on jõudlusteave, sealhulgas kaadrisagedus.
 
@@ -349,12 +349,12 @@ Miks see vajalik on: nii saab katset teha SSH kaudu või Jetsonis, millel pole e
 
 Oodatud tulemus: pärast `Ctrl+C` vajutamist on Jetsoni kaustas `/home/kasutaja/jetson-inference/data/imx219-detect.mp4`. Ära lisa seda videot avalikku GitHubi hoidlasse, kui kaadris on inimesed, kodu või muu privaatne sisu.
 
-## 8. M9 Pro USB veebikaamera reaalajavoog
+## 8. USB kaamera reaalajavoog
 
 Tee see katse Jetsoniga ühendatud ekraanil.
 
 ```bash
-# Ava M9 Pro USB veebikaamera. Selles komplektis on see /dev/video1.
+# Ava USB kaamera. Selles komplektis on see /dev/video1.
 # Sisendi suurus ja MJPEG kodek vastavad Lab 001-s kontrollitud 1920x1080 vormingule.
 ./detectnet \
   --network=ssd-mobilenet-v2 \
@@ -366,13 +366,13 @@ Tee see katse Jetsoniga ühendatud ekraanil.
   /dev/video1
 ```
 
-Mida see käsk teeb: avab USB-kaamera MJPEG voo, dekodeerib selle Jetsonis, tuvastab objektid ja näitab tulemust videoaknas.
+Mida see käsk teeb: avab USB kaamera MJPEG voo, dekodeerib selle Jetsonis, tuvastab objektid ja näitab tulemust videoaknas.
 
-Miks see vajalik on: USB-kaamera korral on õige V4L2 seade ja vorming sama tähtsad kui mudel. Siin on kasutatud Lab 001-s kontrollitud M9 Pro vormingut.
+Miks see vajalik on: USB kaamera korral on õige V4L2 seade ja vorming sama tähtsad kui mudel. Siin on kasutatud Lab 001-s kontrollitud USB kaamera vormingut.
 
-Oodatud tulemus: näed M9 Pro pilti koos objektituvastuse tulemustega. Kui seadmenumber või vorming muutus, ära muuda väärtusi oletuse järgi: korda Lab 001 seadme- ja vormingukontrolli.
+Oodatud tulemus: näed USB kaamera pilti koos objektituvastuse tulemustega. Kui seadmenumber või vorming muutus, ära muuda väärtusi oletuse järgi: korda Lab 001 seadme- ja vormingukontrolli.
 
-Peata katse `Ctrl+C` abil. Võrdle IMX219-ga vähemalt üht omadust: pildi vaatenurk, viivitus, tuvastuse kindlus või FPS.
+Peata katse `Ctrl+C` abil. Võrdle CSI kaameraga vähemalt üht omadust: pildi vaatenurk, viivitus, tuvastuse kindlus või FPS.
 
 ## 9. IP-kaamera RTSP reaalajavoog
 
@@ -454,8 +454,8 @@ Labor on esimesel tasemel tehtud, kui kõik järgmised väited on tõesed.
 - `./detectnet --help` töötab konteineris.
 - Projekti näidispildist tekkis märgendatud JPEG fail.
 - Vähemalt ühe enda kaamera JPEG pildist tekkis märgendatud JPEG fail.
-- IMX219 töötas reaalajas sisendiga `csi://0`, mitte `/dev/video0`.
-- M9 Pro töötas reaalajas sisendiga `/dev/video1`.
+- CSI kaamera töötas reaalajas sisendiga `csi://0`, mitte `/dev/video0`.
+- USB kaamera töötas reaalajas sisendiga `/dev/video1`.
 - RTSP pilt või reaalajavoog töötas ilma, et parool jõudis käsuajaloosse või hoidlasse.
 - Tead kasutatud mudelit ja läve ning oskad nimetada FPS-i või salvestatud video pikkust ja vähemalt üht valeleidu või märkamata jäänud objekti.
 
@@ -466,8 +466,8 @@ Labor on esimesel tasemel tehtud, kui kõik järgmised väited on tõesed.
 | `docker version` ei näita serverit | Docker'i deemon ei tööta või kasutajal puudub õigus | paranda kõigepealt 0. taseme Docker'i seadistus |
 | `manifest ... not found` | sellele L4T väljalaskele pole vaikimisi konteinerisilti | järgi jaotist „Kui vaikimisi konteiner ei käivitu” |
 | `./detectnet: No such file or directory` | konteiner ei sisalda sobivat projekti ehitust | kontrolli konteineri silti ja abikäsku |
-| IMX219 ei avane | kasutati `/dev/video0` või CSI/Arguse tee ei tööta | kasuta `csi://0` ja korda Lab 001 IMX219 testi |
-| USB-kaamera ei avane | `/dev/video1` või MJPEG vorming muutus | korda Lab 001 seadme- ja vormingukontrolli |
+| CSI kaamera ei avane | kasutati `/dev/video0` või CSI/Arguse tee ei tööta | kasuta `csi://0` ja korda Lab 001 CSI kaamera testi |
+| USB kaamera ei avane | `/dev/video1` või MJPEG vorming muutus | korda Lab 001 seadme- ja vormingukontrolli |
 | RTSP voog ei avane | võrguühendus, URL-i tee või kaamera õigused | korda Lab 001 RTSP ühe kaadri testi; ära jaga päris URL-i |
 | Liiga palju valepositiivseid leide | lävi on liiga madal või mudeli klassid ei sobi | tõsta läve näiteks väärtuseni `0.70` |
 | Õige objekt jääb märkamata | lävi on liiga kõrge, objekt on väike või klass puudub mudelis | langeta läve näiteks väärtuseni `0.30` |
@@ -520,8 +520,8 @@ Töötle üks Lab 001 varem salvestatud pilt. Lahendus peab kirjutama kõik läv
 Tee järgmine käsk **konteineri sees**.
 
 ```bash
-# Töötle M9 Pro varem salvestatud JPEG faili.
-# --input on pildifail, seega see käsk ei ava USB-kaamerat.
+# Töötle USB kaamerast varem salvestatud JPEG faili.
+# --input on pildifail, seega see käsk ei ava USB kaamerat.
 # --output-json salvestab masinloetavad leiud ja --output-image märgendatud pildi.
 python3 /lab-scripts/detectnet_static_json.py \
   --input /camera-tests/m9-pro-mjpg.jpg \
@@ -589,10 +589,10 @@ siis lisa logifaili tuvastusperioodi alguse ajatempel ja tekst
 
 `ssd-mobilenet-v2` COCO klassi nimi on täpselt `person`, mitte `a person`. Viimane on sobiv tekstiviip NanoOWL-is, kuid `detectnet` valib ainult COCO klasside hulgast.
 
-Tee järgmine käsk konteineri sees. See näide kasutab M9 Pro USB-kaamerat, mis oli selles komplektis Lab 001 järgi `/dev/video1`.
+Tee järgmine käsk konteineri sees. See näide kasutab USB kaamerat, mis oli selles komplektis Lab 001 järgi `/dev/video1`.
 
 ```bash
-# Ava M9 Pro reaalajavoog, otsi klassi person ja hoia iga katkematu
+# Ava USB kaamera reaalajavoog, otsi klassi person ja hoia iga katkematu
 # tuvastusperioodi aega. Pärast 5 sekundi täitumist lisatakse üks logirida.
 python3 /lab-scripts/detectnet_person_5s_log.py \
   --input /dev/video1 \
@@ -602,7 +602,7 @@ python3 /lab-scripts/detectnet_person_5s_log.py \
   --duration 5
 ```
 
-Mida see käsk teeb: `--input /dev/video1` avab USB-kaamera. Skript mõõdab kestust `time.monotonic()` kellaga, et süsteemikella muutmine ei rikuks viiesekundilist vahemikku. Logis kasutatakse eraldi päriskella ajatempliga tuvastuse algushetke.
+Mida see käsk teeb: `--input /dev/video1` avab USB kaamera. Skript mõõdab kestust `time.monotonic()` kellaga, et süsteemikella muutmine ei rikuks viiesekundilist vahemikku. Logis kasutatakse eraldi päriskella ajatempliga tuvastuse algushetke.
 
 Miks see vajalik on: üksik kaader võib olla valeleid. Ajanõue teeb reegli rangemaks ja muudab olukorra "inimene on kaamera ees" selgelt mõõdetavaks.
 
@@ -623,7 +623,7 @@ Reegel on esimeses versioonis tahtlikult range: üks kaader, kus `person` puudub
 
 Sama lahendus töötab ka teiste Lab 002 videoallikatega. Asenda ainult `--input` väärtus:
 
-- IMX219 jaoks `csi://0`;
+- CSI kaamera jaoks `csi://0`;
 - RTSP jaoks eelnevates jaotistes turvaliselt loodud `"$RTSP_URL"`;
 - salvestatud video jaoks näiteks `/detectnet-results/minu-video.mp4`.
 

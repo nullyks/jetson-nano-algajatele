@@ -8,7 +8,7 @@ Selles laboris kasutad NanoOWL-i: avatud sõnavaraga objektituvastust. Erinevalt
 varem salvestatud kaamerapilt + tekstiviip -> NanoOWL -> tulemuspilt
 ```
 
-Alusta kõigi kolme kaamera **varem salvestatud JPEG piltidega**. Seejärel ava reaalajas M9 Pro USB-kaamera, IMX219 CSI-kaamera või RTSP-kaamera. NanoOWL-i ametlik reaalajademo kasutab ainult V4L2 kaameraindeksit, mistõttu selle labori juurde kuulub eraldi, kommenteeritud sisendadapter.
+Alusta kõigi kolme kaamera **varem salvestatud JPEG piltidega**. Seejärel ava reaalajas USB kaamera, CSI kaamera või RTSP-kaamera. NanoOWL-i ametlik reaalajademo kasutab ainult V4L2 kaameraindeksit, mistõttu selle labori juurde kuulub eraldi, kommenteeritud sisendadapter.
 
 ## Mida õpid
 
@@ -17,7 +17,7 @@ Alusta kõigi kolme kaamera **varem salvestatud JPEG piltidega**. Seejärel ava 
 - kuidas paigaldada `jetson-containers` tööriistu;
 - kuidas hoida TensorRT mootor ja tulemuspildid Jetsonis püsivalt alles;
 - kuidas võrrelda sama pilti `detectnet`-i ja NanoOWL-iga;
-- miks IMX219, USB- ja RTSP-kaamera vajavad eri hõivamiskihti;
+- miks CSI, USB- ja RTSP-kaamera vajavad eri hõivamiskihti;
 - kuidas anda RTSP ühendusandmed konteinerile ilma neid käsureale või GitHubi kirjutamata;
 - miks tekstiviip ei tee tundmatu eseme tuvastust automaatselt kindlaks.
 
@@ -121,7 +121,7 @@ Kõigis järgmistes `jetson-containers run` käskudes kasutatakse muutujat `$NAN
 
 ### Loo kohalik NanoOWL-i paranduskonteinerpakett
 
-Kontrollitud NanoOWL-i konteinerpaketis puudub M9 Pro veebidemo jaoks vajalik `aiohttp` teek. Konteinerpaketis olev näidiskood annab OpenCV uuema versiooniga tulemuspildi joonistamisel vea, sest pildimassiiv on kirjutuskaitstud. Järgmine ühekordne samm teeb Jetsonis **kohaliku** konteinerpaketi, mis lisab puuduva teegi ja parandab selle ühe rea. Seda konteinerpaketti ei saadeta Docker Hubi ega GitHubi.
+Kontrollitud NanoOWL-i konteinerpaketis puudub USB kaamera veebidemo jaoks vajalik `aiohttp` teek. Konteinerpaketis olev näidiskood annab OpenCV uuema versiooniga tulemuspildi joonistamisel vea, sest pildimassiiv on kirjutuskaitstud. Järgmine ühekordne samm teeb Jetsonis **kohaliku** konteinerpaketi, mis lisab puuduva teegi ja parandab selle ühe rea. Seda konteinerpaketti ei saadeta Docker Hubi ega GitHubi.
 
 ```bash
 # Eemalda ainult eelmise, pooleli jäänud kohaliku konteinerpaketi loomise konteiner.
@@ -153,7 +153,7 @@ docker image inspect "$NANOOWL_IMAGE" >/dev/null && \
 
 Mida käsud teevad: `aiohttp` võimaldab NanoOWL-i `tree_demo.py` veebiserveri käivitada. `sed -i` muudab NanoOWL-i konteinerpaketis ühe näidiskoodi rea: `.copy()` annab OpenCV-le kirjutatava pildimassiivi. `docker commit` salvestab tulemuse ainult selle Jetsoni Dockerisse kohaliku konteinerpaketina.
 
-Miks see vajalik on: ilma selle sammuta võib pildituvastus tulemuse joonistamisel katkeda veaga `cv2.rectangle ... readonly` ja M9 Pro veebidemo veaga `No module named aiohttp`.
+Miks see vajalik on: ilma selle sammuta võib pildituvastus tulemuse joonistamisel katkeda veaga `cv2.rectangle ... readonly` ja USB kaamera veebidemo veaga `No module named aiohttp`.
 
 Oodatud tulemus: `nanoowl-local:latest` on Jetsoni kohalike Dockeri konteinerpakettide loetelus. Edaspidi kasuta samas terminalis muutujat `$NANOOWL_IMAGE`; see viitab nüüd parandatud konteinerpaketile.
 
@@ -242,16 +242,16 @@ Miks see vajalik on: ONNX-faili ei ole pildituvastuse ajal enam vaja, kuid seda 
 
 ## 5. Kolme kaamera piltide võrdlus
 
-Selles jaotises töötleb NanoOWL **juba olemasolevaid JPEG faile**. Kaamerat ei avata ja USB-kaamera ühendamine ei muuda tulemust. Nii saab sama sisendit võrrelda Lab 002 `detectnet`-iga.
+Selles jaotises töötleb NanoOWL **juba olemasolevaid JPEG faile**. Kaamerat ei avata ja USB kaamera ühendamine ei muuda tulemust. Nii saab sama sisendit võrrelda Lab 002 `detectnet`-iga.
 
 Kasuta alguses ingliskeelseid tekstiviipu. NanoOWL-i alusmudeli jaoks on need kõige paremini võrreldavad. Eesti keelt võib hiljem katsetada, kuid ära eelda sama tulemust.
 
-### IMX219 varem salvestatud pilt
+### CSI kaamera varem salvestatud pilt
 
 Tee see käsk Jetsoni host-terminalis, mitte konteineri sees.
 
 ```bash
-# Töötle Lab 001 IMX219 JPEG faili. Sisend on fail, mitte CSI-kaamera otsevoog.
+# Töötle Lab 001 CSI kaamera JPEG faili. Sisend on fail, mitte CSI kaamera otsevoog.
 # :ro teeb originaalpiltide kaustaseose ainult loetavaks.
 jetson-containers run \
   --workdir /opt/nanoowl/examples \
@@ -267,16 +267,16 @@ jetson-containers run \
   --image_encoder_engine=/opt/nanoowl/data/owl_image_encoder_patch32.engine
 ```
 
-Mida see käsk teeb: NanoOWL otsib IMX219 pildilt ainult tekstiviibas nimetatud objekte ning kirjutab märgendatud tulemuse.
+Mida see käsk teeb: NanoOWL otsib CSI kaamera pildilt ainult tekstiviibas nimetatud objekte ning kirjutab märgendatud tulemuse.
 
 Miks see vajalik on: saad kontrollida, kas tekstiviip aitab leida objekti, millel Lab 002 COCO klassides täpset nime ei olnud.
 
 Oodatud tulemus: kaustas `~/nanoowl-results` on `imx219-nanoowl.jpg`. Tulemuse kast on hüpotees, mitte kinnitatud fakt.
 
-### M9 Pro USB-kaamera varem salvestatud pilt
+### USB kaamera varem salvestatud pilt
 
 ```bash
-# Töötle Lab 001 M9 Pro JPEG faili. Sisend on pildifail, mitte /dev/video1 reaalajavoog.
+# Töötle Lab 001 USB kaamera JPEG faili. Sisend on pildifail, mitte /dev/video1 reaalajavoog.
 jetson-containers run \
   --workdir /opt/nanoowl/examples \
   --volume "$HOME/nanoowl-data:/opt/nanoowl/data" \
@@ -291,9 +291,9 @@ jetson-containers run \
   --image_encoder_engine=/opt/nanoowl/data/owl_image_encoder_patch32.engine
 ```
 
-Mida see käsk teeb: kasutab sama tekstiviipa M9 Pro pildil ja kirjutab eraldi tulemuse.
+Mida see käsk teeb: kasutab sama tekstiviipa USB kaamera pildil ja kirjutab eraldi tulemuse.
 
-Miks see vajalik on: võrreldes IMX219 tulemusega näed, kas pildi vaatenurk või kvaliteet muudab leide.
+Miks see vajalik on: võrreldes CSI kaamera tulemusega näed, kas pildi vaatenurk või kvaliteet muudab leide.
 
 Oodatud tulemus: tekib `~/nanoowl-results/m9-pro-nanoowl.jpg`.
 
@@ -332,7 +332,7 @@ ls -lh "$HOME/nanoowl-results"
 
 ## 6. Tekstiviiba katse
 
-Tee ühe pildifailiga vähemalt kaks katset. Kasuta eelmise M9 Pro käsu juures samu kaustu ja mootorit, kuid asenda järgmised read.
+Tee ühe pildifailiga vähemalt kaks katset. Kasuta eelmise USB kaamera käsu juures samu kaustu ja mootorit, kuid asenda järgmised read.
 
 ```bash
 # Üldine tekstiviip küsib üht laia kategooriat.
@@ -352,15 +352,15 @@ Miks see vajalik on: NanoOWL-i tulemus sõltub sõnastusest. Tekstiviip on katse
 
 Oodatud tulemus: võrdled vähemalt kahte tulemuspilti ning oskad nimetada kasutatud tekstiviiba, läve, leide ja ühe valeleiu või märkamata jäänud objekti.
 
-## 7. Reaalajademo: M9 Pro, IMX219 ja RTSP
+## 7. Reaalajademo: USB kaamera, CSI kaamera ja RTSP
 
-NanoOWL-i ametlik `tree_demo.py` avab ainult numbrilise V4L2 kaameraindeksi. See sobib M9 Pro jaoks, kuid mitte selle komplekti IMX219 jaoks ega RTSP aadressi jaoks. Labori fail [`scripts/nanoowl_stream_demo.py`](../scripts/nanoowl_stream_demo.py) hoiab NanoOWL-i mudeli ja veebilehe samana, kuid lisab kolm sisendit:
+NanoOWL-i ametlik `tree_demo.py` avab ainult numbrilise V4L2 kaameraindeksi. See sobib USB kaamera jaoks, kuid mitte selle komplekti CSI kaamera jaoks ega RTSP aadressi jaoks. Labori fail [`scripts/nanoowl_stream_demo.py`](../scripts/nanoowl_stream_demo.py) hoiab NanoOWL-i mudeli ja veebilehe samana, kuid lisab kolm sisendit:
 
-- `v4l2`: USB-kaamera, näiteks M9 Pro;
-- `csi`: NVIDIA Arguse kaudu IMX219;
+- `v4l2`: USB kaamera;
+- `csi`: NVIDIA Arguse kaudu CSI kaamera;
 - `rtsp`: GStreameri kaudu H.264 RTSP voog.
 
-See on teadlikult varasemast M9 Pro näitest erinev. Erinevus on ainult kaadri hõivamises: pärast OpenCV BGR-kaadri saamist kasutavad kõik kolm sama NanoOWL-i TensorRT mootorit, tekstiviipa ja veebilehte.
+See on teadlikult varasemast USB kaamera näitest erinev. Erinevus on ainult kaadri hõivamises: pärast OpenCV BGR-kaadri saamist kasutavad kõik kolm sama NanoOWL-i TensorRT mootorit, tekstiviipa ja veebilehte.
 
 ### 7.1 Too demoprogramm Jetsonisse
 
@@ -411,12 +411,12 @@ Miks see vajalik on: tulemüüri vaikimisi sisenevaid ühendusi keelava seadistu
 
 Oodatud tulemus: `ufw status numbered` näitab pordi 7860 lubavat reeglit. Kui UFW ei ole aktiivne, ei ole seda reeglit selle labori jaoks vaja.
 
-### 7.3 M9 Pro USB-kaamera otsevoog
+### 7.3 USB kaamera otsevoog
 
-Tee see käsk Jetsoni host-terminalis. Lab 001 seadmete kontrollis oli M9 Pro kaamera `/dev/video1`; USB-seadmete ühendamise järjekord võib indeksi muuta.
+Tee see käsk Jetsoni host-terminalis. Lab 001 seadmete kontrollis oli USB kaamera `/dev/video1`; USB-seadmete ühendamise järjekord võib indeksi muuta.
 
 ```bash
-# Käivita NanoOWL-i veebidemo M9 Pro USB-kaameraga.
+# Käivita NanoOWL-i veebidemo USB kaameraga.
 # --source v4l2 kasutab OpenCV kaameraindeksit ning --camera 1 valib /dev/video1.
 # Skripti kaust seotakse konteineriga ainult lugemiseks, seega konteiner ei muuda õppematerjali faili.
 jetson-containers run \
@@ -433,16 +433,16 @@ jetson-containers run \
   --port 7860
 ```
 
-Mida see käsk teeb: avab M9 Pro reaalajavoo, käivitab NanoOWL-i ning pakub veebilehte, kus saad tekstiviipa muuta.
+Mida see käsk teeb: avab USB kaamera reaalajavoo, käivitab NanoOWL-i ning pakub veebilehte, kus saad tekstiviipa muuta.
 
-Miks see vajalik on: USB-kaamera annab juba OpenCV-le sobiva videovoo. `--camera 1` ei tähenda "teist kõigile sobivat kaamerat", vaid selle Jetsoni praegust V4L2 seadmeindeksit.
+Miks see vajalik on: USB kaamera annab juba OpenCV-le sobiva videovoo. `--camera 1` ei tähenda "teist kõigile sobivat kaamerat", vaid selle Jetsoni praegust V4L2 seadmeindeksit.
 
-### 7.4 IMX219 CSI-kaamera otsevoog
+### 7.4 CSI kaamera otsevoog
 
-Ära kasuta IMX219 puhul M9 Pro `--source v4l2 --camera 0` käsku. Selles komplektis on `/dev/video0` Bayeri toorandmestik. `--source csi` valib selle asemel NVIDIA Arguse kaamerateenuse ja GStreameri töövoo.
+Ära kasuta CSI kaamera puhul USB kaamera `--source v4l2 --camera 0` käsku. Selles komplektis on `/dev/video0` Bayeri toorandmestik. `--source csi` valib selle asemel NVIDIA Arguse kaamerateenuse ja GStreameri töövoo.
 
 ```bash
-# Käivita NanoOWL-i veebidemo IMX219 CSI-kaameraga.
+# Käivita NanoOWL-i veebidemo CSI kaameraga.
 # --sensor-id 0 tähendab esimest CSI andurit Arguse jaoks, mitte /dev/video0 faili.
 # --resolution määrab NanoOWL-i töötlemiseks ja veebilehele saadetava kaadri mõõdu.
 jetson-containers run \
@@ -460,11 +460,11 @@ jetson-containers run \
   --port 7860
 ```
 
-Mida see käsk teeb: `nvarguscamerasrc` küsib IMX219-lt kaadreid Arguse kaudu, GStreamer teisendab need OpenCV BGR-pildiks ning NanoOWL lisab tekstiviibale vastavad leiud.
+Mida see käsk teeb: `nvarguscamerasrc` küsib CSI kaameralt kaadreid Arguse kaudu, GStreamer teisendab need OpenCV BGR-pildiks ning NanoOWL lisab tekstiviibale vastavad leiud.
 
-Miks see vajalik on: IMX219 sensor ei väljasta selles seadistuses tavalist värvilist veebikaamerapilti. Argus haldab sensorirežiimi, NVIDIA riistvarakiirendust ja värvivormingut enne, kui mudel pilti näeb.
+Miks see vajalik on: CSI kaamera sensor ei väljasta selles seadistuses tavalist värvilist veebikaamerapilti. Argus haldab sensorirežiimi, NVIDIA riistvarakiirendust ja värvivormingut enne, kui mudel pilti näeb.
 
-Oodatud tulemus: terminalis on rida `Opened CSI camera sensor-id 0.` ja seejärel `Running on http://...`. Veebilehel muuda tekstiviipa, näiteks `[a person, a chair]`. Kui USB-kaamera on samuti ühendatud, ei muuda see `--sensor-id 0` valikut.
+Oodatud tulemus: terminalis on rida `Opened CSI camera sensor-id 0.` ja seejärel `Running on http://...`. Veebilehel muuda tekstiviipa, näiteks `[a person, a chair]`. Kui USB kaamera on samuti ühendatud, ei muuda see `--sensor-id 0` valikut.
 
 ### 7.5 RTSP-kaamera otsevoog
 
@@ -532,11 +532,11 @@ Veebidemo ei ole kaitstud sisselogimisega. Kasuta seda ainult usaldatud kohtvõr
 
 Sama raalnägemismudel võib eri videoallikate jaoks vajada eri hõivamiskihti.
 
-- M9 Pro: OpenCV avab kohaliku V4L2 seadme numbri järgi.
-- IMX219: Argus juhib CSI sensorit ning GStreamer teeb Bayeri andmetest mudelile sobiva BGR-kaadri.
+- USB kaamera: OpenCV avab kohaliku V4L2 seadme numbri järgi.
+- CSI kaamera: Argus juhib CSI sensorit ning GStreamer teeb Bayeri andmetest mudelile sobiva BGR-kaadri.
 - RTSP: GStreamer loob võrguühenduse, puhverdab voogu ja dekodeerib H.264 video.
 
-Seega ära asenda IMX219 või RTSP näites lihtsalt `--camera` numbrit. Kõigis kolmes näites algab NanoOWL-i osa alles pärast seda, kui hõivamiskiht on andnud talle BGR-kaadri.
+Seega ära asenda CSI kaamera või RTSP näites lihtsalt `--camera` numbrit. Kõigis kolmes näites algab NanoOWL-i osa alles pärast seda, kui hõivamiskiht on andnud talle BGR-kaadri.
 
 ## 9. Võrdlus Lab 002-ga
 
@@ -548,7 +548,7 @@ Võrdle sama pildi tulemusi järgmise tabeli abil.
 | Kas aiatööriista saab küsida? | ainult siis, kui COCO klass sobib | jah, tekstiviibaga |
 | Kas tulemus on alati õige? | ei | ei |
 | Mis on esimene usaldusväärne sisend? | JPEG pildifail | sama JPEG pildifail |
-| Mis on esimene otsevoog selles komplektis? | IMX219, M9 Pro või RTSP | M9 Pro, IMX219 või RTSP sisendadapteri kaudu |
+| Mis on esimene otsevoog selles komplektis? | CSI kaamera, USB kaamera või RTSP | USB kaamera, CSI kaamera või RTSP sisendadapteri kaudu |
 
 Kontrollküsimused pärast võrdlust:
 
@@ -569,7 +569,7 @@ Labor on tehtud esimesel tasemel, kui:
 - oled proovinud sama pildi peal vähemalt kahte eri tekstiviipa;
 - tead, et pildifail ei ava kaamerat;
 - vähemalt ühe reaalajakaamera veebidemo töötab ning tead, milline `--source` sellele kaamerale sobib;
-- tead, miks IMX219 kasutab `--source csi`, mitte `--camera 0`;
+- tead, miks CSI kaamera kasutab `--source csi`, mitte `--camera 0`;
 - tead, et RTSP aadress tuleb hoida keskkonnamuutujas, mitte kirjutada NanoOWL-i käsureale;
 - ei ole salvestanud RTSP URL-i, parooli ega privaatseid kaamerapilte avalikku hoidlasse.
 
@@ -586,8 +586,8 @@ Labor on tehtud esimesel tasemel, kui:
 | `cv2.rectangle ... readonly` | NanoOWL-i algne näidiskood annab OpenCV-le kirjutuskaitstud pildi | loo jaotises 2 kirjeldatud kohalik paranduspilt |
 | `No module named aiohttp` | NanoOWL-i algsest pildist puudub veebidemo teek | loo jaotises 2 kirjeldatud kohalik paranduspilt |
 | tulemuspilt on tühi või leide pole | tekstiviip, lävi või pilt ei sobi | alanda läve näiteks `0.05` ja lihtsusta ingliskeelset tekstiviipa |
-| M9 Pro demo ei ava pilti | `/dev/video1` ei ole enam M9 Pro või kaamera on hõivatud | korda Lab 001 seadmete kontrolli ja sulge muud kaameraprogrammid |
-| `Could not open CSI camera sensor-id 0` | Argus ei pääse sensorile ligi või kaamera on hõivatud | sulge muud IMX219 programmid, kontrolli Lab 001 Arguse testi ning käivita demo uuesti |
+| USB kaamera demo ei ava pilti | `/dev/video1` ei ole enam USB kaamera või kaamera on hõivatud | korda Lab 001 seadmete kontrolli ja sulge muud kaameraprogrammid |
+| `Could not open CSI camera sensor-id 0` | Argus ei pääse sensorile ligi või kaamera on hõivatud | sulge muud CSI kaamera programmid, kontrolli Lab 001 Arguse testi ning käivita demo uuesti |
 | `Could not open RTSP stream` | `RTSP_URL` puudub, voog ei ole H.264 või võrk ei jõua kaamerani | kontrolli muutuja sisestamist, kaamera vooteed ja sama kohtvõrku; ära kuva URL-i avalikus kohas |
 | RTSP pilt jääb seisma | võrgu kõikumine või liiga väike puhver | proovi `--latency 500` ja kontrolli kaamera võrguühendust |
 | veebileht avaneb Jetsonis, kuid mitte teises arvutis | UFW keelab pordi 7860 või arvutid ei ole samas kohtvõrgus | kontrolli jaotise 7 UFW reeglit ning mõlema seadme võrguühendust |
