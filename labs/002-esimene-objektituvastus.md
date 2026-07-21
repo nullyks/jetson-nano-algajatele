@@ -1,4 +1,4 @@
-# Lab 002: esimene objektituvastus, Rada A
+# Lab 002: esimene objektituvastus - detectnet
 
 ## Eesmärk
 
@@ -494,6 +494,10 @@ siis olukord = "keegi seisab ukse juures".
 Kirjuta päevikusse, milline kaamera sobis kõige paremini, milline objektiklass on reegli sisend, kuidas määrad ukseala, millise läve valisid ning mitu järjestikust kaadrit või sekundit peab tingimus kehtima.
 
 Objektituvastus ütleb, mida mudel ühes kaadris näeb. Olukorra tuvastamine lisab asukoha, aja ja reegli.
+
+## Järgmine samm: NanoOWL
+
+`detectnet` valib leiud etteantud COCO klasside hulgast. Kui soovid katsetada tekstiga kirjeldatud objekte, näiteks `a garden tool`, jätka [Lab 003: NanoOWL](003-nanoowl-tekstipohine-objektituvastus.md) materjaliga. NanoOWL on eraldi labor, sest kasutab teistsugust mudelit ja konteinerikeskkonda.
 
 ## Allikad
 

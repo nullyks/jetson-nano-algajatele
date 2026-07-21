@@ -77,7 +77,9 @@ Hiljem lisa:
 - DeepStream, kui on vaja mitut voogu, madalat latentsust või tootmislaadset pipeline'i;
 - oma andmestik ja oma mudel.
 
-Alusta: [Lab 002](../labs/002-esimene-objektituvastus.md)
+Alusta esmalt: [Lab 002: detectnet](../labs/002-esimene-objektituvastus.md)
+
+Kui COCO klasside piirid ja pildifaili ning reaalajavoo erinevus on selged, jätka: [Lab 003: NanoOWL](../labs/003-nanoowl-tekstipohine-objektituvastus.md).
 
 ## 4. Tase: olukordade tuvastamine
 
@@ -116,7 +118,7 @@ Alusta lihtsast:
 - lühike testprompt;
 - päevikusse tokens/sec, mälu kasutus ja temperatuur.
 
-Alusta: [Lab 003](../labs/003-esimene-kohalik-llm.md)
+Alusta: [Lab 004](../labs/004-esimene-kohalik-llm.md)
 
 ## 6. Tase: raalnägemine + LLM koos
 

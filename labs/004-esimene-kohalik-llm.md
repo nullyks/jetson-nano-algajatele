@@ -1,4 +1,4 @@
-# Lab 003: esimene kohalik LLM
+# Lab 004: esimene kohalik LLM
 
 ## Mida õpid
 

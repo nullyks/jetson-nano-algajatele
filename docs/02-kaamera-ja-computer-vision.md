@@ -172,6 +172,8 @@ Selle raja eesmärk on aru saada, mis on sisend, mudel, väljundkastid, klassid 
 
 NanoOWL on avatud sõnavaraga objektituvastus: sa ei pea piirduma ainult eeldefineeritud klassidega, vaid saad proovida tekstilisi vihjeid.
 
+Alusta pärast `detectnet`-i rada: [Lab 003: tekstiga juhitav objektituvastus - NanoOWL](../labs/003-nanoowl-tekstipohine-objektituvastus.md).
+
 Näiteks:
 
 ```text

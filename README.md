@@ -33,8 +33,9 @@ See repo on eestikeelne õppematerjalide ja katsete kogu NVIDIA Jetson Orin Nano
 ## Esimesed laborid
 
 1. [Lab 001: kaamera kontroll](labs/001-kaamera-kontroll.md)
-2. [Lab 002: esimene objektituvastus](labs/002-esimene-objektituvastus.md)
-3. [Lab 003: esimene kohalik LLM](labs/003-esimene-kohalik-llm.md)
+2. [Lab 002: esimene objektituvastus - detectnet](labs/002-esimene-objektituvastus.md)
+3. [Lab 003: tekstiga juhitav objektituvastus - NanoOWL](labs/003-nanoowl-tekstipohine-objektituvastus.md)
+4. [Lab 004: esimene kohalik LLM](labs/004-esimene-kohalik-llm.md)
 
 ## Päevik
 
