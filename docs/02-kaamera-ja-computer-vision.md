@@ -46,24 +46,9 @@ Miks see vajalik on: IMX219 ja M9 Pro saavad töötada eri toorvormingutes. Kaam
 
 Oodatud tulemus: tuvastad, kas IMX219 on tõesti `/dev/video0`, M9 Pro `/dev/video1`, ning millist `MJPG`, `YUYV` või muud vormingut M9 Pro pakub. Täit väljundit ära avalda, sest selles võivad olla seadme seerianumber ja muud lokaalsed andmed.
 
-## IMX219: üks kaader seadmest `/dev/video0`
+## IMX219: `RG10` Bayeri kaader seadmest `/dev/video0`
 
-Kui `v4l2-ctl --list-devices` seob IMX219 seadmega `/dev/video0`, salvesta üks kaader:
-
-```bash
-gst-launch-1.0 -e v4l2src device=/dev/video0 num-buffers=1 ! \
-  videoconvert ! jpegenc ! \
-  filesink location="$HOME/jetson-camera-tests/imx219-video0.jpg"
-file "$HOME/jetson-camera-tests/imx219-video0.jpg"
-```
-
-Mida see käsurühm teeb: `v4l2src` loeb pilti videoseadmest, `num-buffers=1` lõpetab voo pärast esimest kaadrit, `videoconvert` teisendab piksliandmed JPEG kodeerijale sobivaks ning `filesink` kirjutab pildi kohalikku faili.
-
-Miks see vajalik on: üks kaader on väikseim kontroll, et kaamera, draiver ja GStreamer töötavad enne reaalajas voo või raalnägemismudeli lisamist.
-
-Oodatud tulemus: tekib fail `imx219-video0.jpg` ning `file` kirjeldab seda JPEG pildina.
-
-Mõnes Jetsoni image'is jõuab CSI-kaamera GStreamerisse Arguse kaudu, mitte V4L2 seadmefailina. Kui IMX219 ei tööta `/dev/video0` kaudu, kontrolli alternatiivi:
+Selles seadistuses on IMX219 seotud `/dev/video0` seadmega, kuid selle V4L2 vorming on `RG10`: 10-bitine Bayeri toorandmestik. `videoconvert` ei tööta selle vorminguga otse, seega `v4l2src ! videoconvert ! jpegenc` annab vea `not-negotiated`. Kasuta IMX219 jaoks Arguse teed:
 
 ```bash
 gst-inspect-1.0 nvarguscamerasrc
@@ -73,15 +58,15 @@ gst-launch-1.0 -e nvarguscamerasrc sensor-id=0 num-buffers=1 ! \
   filesink location="$HOME/jetson-camera-tests/imx219-argus.jpg"
 ```
 
-Mida see käsurühm teeb: esimene käsk kontrollib NVIDIA Arguse kaameraelemendi olemasolu. Teine loeb CSI kaamerast ühe kaadri, kasutab Jetsoni videoteisendit ning kirjutab JPEG faili.
+Mida see käsurühm teeb: esimene käsk kontrollib NVIDIA Arguse kaameraelemendi olemasolu. Teine loeb CSI kaamera Bayeri kaadri Arguse kaudu, teeb vajalikud värviteisendused, kasutab Jetsoni videoteisendit ning kirjutab esimese kaadri JPEG faili.
 
-Miks see vajalik on: kaamera füüsiline ühendus ja Linuxi videoseadme liides ei ole sama asi. Arguse tee on mõne CSI-kaamera seadistuse õige tee.
+Miks see vajalik on: kaamera füüsiline ühendus ja Linuxi videoseadme liides ei ole sama asi. Arguse tee töötleb IMX219 Bayeri toorandmestikku õigesti ning on selle seadistusega läbi proovitud.
 
 Oodatud tulemus: kui Arguse plugin on olemas, luuakse `imx219-argus.jpg`. Kui `gst-inspect-1.0` ei leia elementi, kontrolli JetPacki versiooni ja kaameradraiverit, mitte ära paigalda juhuslikku pluginat.
 
 ## USB veebikaamera M9 Pro: üks kaader seadmest `/dev/video1`
 
-Kasuta enne vorminguloendi tulemust. Kui M9 Pro pakub `MJPG` vormingut, asenda näites olevad eraldusvõime ja kaadrisagedus enda loendist saadud väärtustega:
+M9 Pro pakub selles seadistuses `MJPG` vorminguga 1920×1080 pilti 30 fps juures. Salvesta kaader nii:
 
 ```bash
 gst-launch-1.0 -e v4l2src device=/dev/video1 num-buffers=1 ! \
@@ -94,7 +79,7 @@ Mida see käsurühm teeb: M9 Pro annab ühe MJPEG kaadri. `jpegparse` töötleb 
 
 Miks see vajalik on: MJPEG korral on kaamera kaader juba JPEG kujul ning see tee on lihtne ja väikese lisakoormusega.
 
-Oodatud tulemus: `m9-pro-mjpg.jpg` on loetav JPEG pilt. Kui kapslid ei sobi, ära proovi juhuslikke väärtusi, vaid kopeeri vorminguloendist õige laius, kõrgus ja kaadrisagedus.
+Oodatud tulemus: `m9-pro-mjpg.jpg` on loetav JPEG pilt. See 1920×1080 ja 30 fps näide on selle M9 Pro seadistusega läbi proovitud. Kui kapslid ei sobi teises seadistuses, ära proovi juhuslikke väärtusi, vaid kopeeri vorminguloendist õige laius, kõrgus ja kaadrisagedus.
 
 Kui M9 Pro pakub `YUYV` vormingut, kasuta seda varianti:
 

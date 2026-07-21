@@ -71,7 +71,7 @@ Oodatud tulemus: sinu seadmes peaks IMX219 olema seotud `/dev/video0` ja M9 Pro 
 
 Kirjuta päevikusse ainult kaamera mudel ja seadmenumber, näiteks `IMX219 -> /dev/video0`. Ära lisa täit `v4l2-ctl --all` väljundit avalikku reposse, sest see võib sisaldada seadme seerianumbrit.
 
-## Samm 3: IMX219 kaader seadmest `/dev/video0`
+## Samm 3: IMX219 kaader, kui `/dev/video0` annab `RG10` Bayeri toorandmed
 
 Kõigepealt vaata, milliseid vorminguid kaamera pakub:
 
@@ -83,31 +83,9 @@ Mida see käsk teeb: kuvab seadme toetatud piksli vormingud, eraldusvõimed ja k
 
 Miks see vajalik on: ainult toetatud vormingut kasutav GStreameri toru saab kokkulepitud pildi kätte.
 
-Oodatud tulemus: üks või mitu vormingut. Kui selles on sinu soovitud eraldusvõime, võid selle soovi korral järgmise käsu `video/x-raw` ossa lisada.
+Oodatud tulemus: sinu IMX219 puhul on `/dev/video0` vorming `RG10` ehk 10-bitine Bayeri toorandmestik. See ei ole veel tavapärane värvipilt, mistõttu käsk `v4l2src ! videoconvert ! jpegenc` lõpeb vorminguläbirääkimise veaga `not-negotiated`. Ära seda toru selle kaamera jaoks kasuta.
 
-Salvesta üks kaader:
-
-```bash
-gst-launch-1.0 -e v4l2src device=/dev/video0 num-buffers=1 ! \
-  videoconvert ! jpegenc ! \
-  filesink location="$HOME/jetson-camera-tests/imx219-video0.jpg"
-file "$HOME/jetson-camera-tests/imx219-video0.jpg"
-```
-
-Mida see käsurühm teeb:
-
-- `v4l2src device=/dev/video0` loeb pilti IMX219 V4L2 seadmest.
-- `num-buffers=1` peatab voo pärast esimest kaadrit.
-- `videoconvert` teisendab toorkaadri JPEG kodeerijale sobivaks vorminguks.
-- `jpegenc` kodeerib kaadri JPEG failiks.
-- `filesink location=...` kirjutab faili ainult Jetsoni kohalikku testkataloogi.
-- `file ...` kontrollib, et tulemuseks on päriselt JPEG pildifail.
-
-Miks see vajalik on: see on kõige väiksem korratav kontroll, et kaamera, draiver ja GStreameri pilditee töötavad koos.
-
-Oodatud tulemus: käsk lõpeb pärast üht kaadrit ning `file` kirjeldab tulemust JPEG pildina.
-
-Kui IMX219 ei ole sinu image'is V4L2 seadmena kasutatav, kuid NVIDIA Arguse kaameraplugin on olemas, proovi alternatiivi:
+Kasuta selle asemel NVIDIA Arguse kaamerapluginat:
 
 ```bash
 gst-inspect-1.0 nvarguscamerasrc
@@ -117,11 +95,11 @@ gst-launch-1.0 -e nvarguscamerasrc sensor-id=0 num-buffers=1 ! \
   filesink location="$HOME/jetson-camera-tests/imx219-argus.jpg"
 ```
 
-Mida see käsurühm teeb: esimene käsk kontrollib, kas NVIDIA Arguse kaameraelement on paigaldatud. Teine loeb IMX219 kaadri Arguse kaudu, teisendab selle JPEG jaoks ja salvestab ühe pildi.
+Mida see käsurühm teeb: esimene käsk kontrollib, kas NVIDIA Arguse kaameraelement on paigaldatud. Teine loeb IMX219 Bayeri kaadri Arguse kaudu, teeb vajalikud kaamera- ja värviteisendused, kodeerib esimese kaadri JPEG-na ning salvestab selle faili.
 
 Miks see vajalik on: mõnes Jetsoni seadistuses jõuab CSI/IMX219 kaamera GStreamerisse Arguse, mitte `/dev/video*` kaudu.
 
-Oodatud tulemus: `gst-inspect-1.0` näitab `nvarguscamerasrc` andmeid ning teine käsk loob faili `imx219-argus.jpg`. Kui esimene käsk ütleb, et elementi ei leitud, ära paigalda juhuslikku pluginat; kontrolli JetPacki ja kaamera draiverit.
+Oodatud tulemus: `gst-inspect-1.0` näitab `nvarguscamerasrc` andmeid ning teine käsk loob faili `imx219-argus.jpg`. See rada on selle IMX219 seadistusega läbi proovitud. Kui esimene käsk ütleb, et elementi ei leitud, ära paigalda juhuslikku pluginat; kontrolli JetPacki ja kaamera draiverit.
 
 ## Samm 4: USB veebikaamera M9 Pro kaader seadmest `/dev/video1`
 
@@ -137,7 +115,7 @@ Miks see vajalik on: USB veebikaamerad pakuvad tihti mitut vormingut. Sobimatu v
 
 Oodatud tulemus: vali üks loetletud vorming ja kasuta täpselt selle juurde kuuluvat laiust, kõrgust ning kaadrisagedust järgmises käsus.
 
-Kui loendis on `MJPG`, asenda näites olevad `1920`, `1080` ja `30` sinu loendis nähtud väärtustega ning salvesta kaader nii:
+Selles M9 Pro seadistuses on `MJPG` vorminguga saadaval 1920×1080 ja 30 fps. Salvesta kaader nii:
 
 ```bash
 gst-launch-1.0 -e v4l2src device=/dev/video1 num-buffers=1 ! \
@@ -150,7 +128,7 @@ Mida see käsurühm teeb: `v4l2src` loeb M9 Pro ühe kaadri, JPEG kapsel kirjeld
 
 Miks see vajalik on: MJPEG korral on kaamera kaader juba JPEG kujul, mistõttu pole seda vaja enne salvestamist lahti kodeerida.
 
-Oodatud tulemus: loodud fail on JPEG pilt. Kui GStreamer teatab, et kapslid ei sobi, kontrolli uuesti `--list-formats-ext` väljundit ja asenda näite parameetrid kaamera tegelike väärtustega.
+Oodatud tulemus: loodud fail on JPEG pilt. See 1920×1080 ja 30 fps näide on selle M9 Pro seadistusega läbi proovitud. Kui GStreamer teatab teises seadistuses, et kapslid ei sobi, kontrolli uuesti `--list-formats-ext` väljundit ja asenda näite parameetrid kaamera tegelike väärtustega.
 
 Kui loendis on `YUYV`, kasuta selle vormingu jaoks seda varianti:
 
