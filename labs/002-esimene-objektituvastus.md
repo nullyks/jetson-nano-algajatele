@@ -482,18 +482,166 @@ Labor on esimesel tasemel tehtud, kui kõik järgmised väited on tõesed.
 | Liiga palju valepositiivseid leide | lävi on liiga madal või mudeli klassid ei sobi | tõsta läve näiteks väärtuseni `0.70` |
 | Õige objekt jääb märkamata | lävi on liiga kõrge, objekt on väike või klass puudub mudelis | langeta läve näiteks väärtuseni `0.30` |
 
-## Edasine katse: objektist olukorrani
+## Ülesanded: objektituvastusest olukorrani
 
-Vali üks lihtne olukord. Ära veel kirjuta programmi; sõnasta esmalt mõõdetav reegel.
+Järgmised ülesanded kasutavad Lab 002 sama `ssd-mobilenet-v2` mudelit, kuid loevad tuvastusi Pythoni teegi kaudu. Nii saab programmi tulemuse asemel kasutada struktureeritud andmeid ja ajareegleid.
 
-```text
-Kui klass "person" on uksealas vähemalt 2 sekundit,
-siis olukord = "keegi seisab ukse juures".
+Enne ülesannete käivitamist tee skriptid Jetsonis konteinerile nähtavaks. Kui oled praegu Lab 002 vanas konteineriterminalis, välju sellest esmalt käsuga `exit`, sest uut kaustaseost ei saa juba töötavale konteinerile lisada.
+
+Kui õppematerjalide hoidlat Jetsonis veel ei ole, klooni see üks kord host-terminalis.
+
+```bash
+# Klooni avalik õppematerjalide hoidla Jetsoni kodukausta.
+# Selles on mõlema ülesande kommenteeritud Pythoni lahendus.
+git clone --depth=1 https://github.com/nullyks/jetson-nano-algajatele.git \
+  "$HOME/jetson-nano-algajatele"
 ```
 
-Kirjuta päevikusse, milline kaamera sobis kõige paremini, milline objektiklass on reegli sisend, kuidas määrad ukseala, millise läve valisid ning mitu järjestikust kaadrit või sekundit peab tingimus kehtima.
+Kui hoidla on juba olemas, uuenda seda enne jätkamist.
 
-Objektituvastus ütleb, mida mudel ühes kaadris näeb. Olukorra tuvastamine lisab asukoha, aja ja reegli.
+```bash
+# Too GitHubist materjalide uusim versioon.
+# --ff-only peatub turvaliselt, kui oled Jetsonis samu faile ise muutnud.
+git -C "$HOME/jetson-nano-algajatele" pull --ff-only
+
+# Loo Jetsoni hostis tulemuste jaoks püsiv kaust.
+# Konteiner seotakse selle kaustaga, nii et JSON, pildid ja logid jäävad alles.
+mkdir -p "$HOME/detectnet-results"
+
+# Ava jetson-inference konteiner koos kaamera-, tulemuste- ja skriptikaustaga.
+cd "$HOME/jetson-inference"
+./docker/run.sh \
+  --container dustynv/jetson-inference:r36.3.0 \
+  --volume "$HOME/jetson-camera-tests:/camera-tests" \
+  --volume "$HOME/detectnet-results:/detectnet-results" \
+  --volume "$HOME/jetson-nano-algajatele/scripts:/lab-scripts:ro"
+```
+
+Mida käsud teevad: `git clone` või `git pull` toob lahendusskriptid Jetsonisse. `mkdir -p` loob püsiva väljundkausta. Viimane käsk avab konteineri ning seob sinna kaameratestide pildid, tulemuste kausta ja skriptid. Sufiks `:ro` tähendab, et konteiner saab skripte ainult lugeda.
+
+Miks see vajalik on: mudel ja Python-teegid asuvad konteineris, kuid ülesannete tulemused peavad jääma Jetsoni hosti alles. Esimesel Pythoni `detectNet` käivitusel võib mudel alla laadida ja TensorRT mootori koostada; see võib võtta mitu minutit.
+
+Oodatud tulemus: konteineris on olemas teed `/camera-tests`, `/detectnet-results` ja `/lab-scripts`.
+
+### Ülesanne 1: pildituvastuste JSON ja märgendatud pilt
+
+Töötle üks Lab 001 varem salvestatud pilt. Lahendus peab kirjutama kõik läve ületanud leiud JSON-faili koos pildi nime, klassi, piirdekasti ja usaldusmääraga. Sama käsk peab looma ka märgendatud pildifaili.
+
+Tee järgmine käsk **konteineri sees**.
+
+```bash
+# Töötle M9 Pro varem salvestatud JPEG faili.
+# --input on pildifail, seega see käsk ei ava USB-kaamerat.
+# --output-json salvestab masinloetavad leiud ja --output-image märgendatud pildi.
+python3 /lab-scripts/detectnet_static_json.py \
+  --input /camera-tests/m9-pro-mjpg.jpg \
+  --output-json /detectnet-results/m9-pro-detections.json \
+  --output-image /detectnet-results/m9-pro-detections.jpg \
+  --network ssd-mobilenet-v2 \
+  --threshold 0.50
+```
+
+Mida see käsk teeb: skript loeb ühe JPEG faili, kutsub `detectNet`-i välja, joonistab leitud objektidele piirdekastid ning salvestab sama tuvastusloendi JSON-vormingus.
+
+Miks see vajalik on: pildifail on hea esimene sisend, sest tulemus on korratav. JSON-i saab hiljem kasutada oma reeglite, veebirakenduse või andmestiku kontrolli sisendina.
+
+Oodatud tulemus: hosti kausta `~/detectnet-results` tekivad failid `m9-pro-detections.json` ja `m9-pro-detections.jpg`.
+
+```bash
+# Vorminda JSON loetavalt ja kuva see terminalis.
+python3 -m json.tool /detectnet-results/m9-pro-detections.json
+
+# Kontrolli, et JSON ja märgendatud JPEG on olemas ning nende suurus ei ole null.
+ls -lh /detectnet-results/m9-pro-detections.json \
+  /detectnet-results/m9-pro-detections.jpg
+```
+
+Mida need käsud teevad: `json.tool` kontrollib ühtlasi, et JSON on korrektse süntaksiga. `ls -lh` näitab failide olemasolu ja suurust.
+
+JSON-i iga leiu kuju on järgmine.
+
+```json
+{
+  "image_name": "m9-pro-mjpg.jpg",
+  "detections": [
+    {
+      "class_id": 1,
+      "class_name": "person",
+      "confidence": 0.8732,
+      "bounding_box": {
+        "left": 120.5,
+        "top": 44.0,
+        "right": 365.8,
+        "bottom": 470.2,
+        "width": 245.3,
+        "height": 426.2
+      }
+    }
+  ]
+}
+```
+
+Mida väljad tähendavad: `confidence` on mudeli usaldus vahemikus 0 kuni 1. `bounding_box` on piksliühikutes piirdekast algse pildi vasakust ülanurgast. `detections` võib olla ka tühi loend, kui ükski leid ei ületa valitud läve.
+
+Katseta sama käsku ka failidega `/camera-tests/imx219-argus.jpg` ja `/camera-tests/rtsp-frame.jpg`. Muuda ainult `--input`, `--output-json` ja `--output-image` failinimesid. Pildifaili töötlemine ei vaja RTSP kasutajanime ega parooli.
+
+Lahenduse lähtekood on [`scripts/detectnet_static_json.py`](../scripts/detectnet_static_json.py). Loe kommentaare eriti kohtades, kus `Detection` objekt teisendatakse JSON-i sõnastikuks ja kus `detectNet` joonistab samale pildile märgendid.
+
+### Ülesanne 2: `person` 5 sekundi vältel videovoos
+
+Selles ülesandes on mõõdetav reegel järgmine.
+
+```text
+Kui detectnet tuvastab klassi "person" katkematult vähemalt 5 sekundit,
+siis lisa logifaili tuvastusperioodi alguse ajatempel ja tekst
+"Inimene tuvastatud!".
+```
+
+`ssd-mobilenet-v2` COCO klassi nimi on täpselt `person`, mitte `a person`. Viimane on sobiv tekstiviip NanoOWL-is, kuid `detectnet` valib ainult COCO klasside hulgast.
+
+Tee järgmine käsk konteineri sees. See näide kasutab M9 Pro USB-kaamerat, mis oli selles komplektis Lab 001 järgi `/dev/video1`.
+
+```bash
+# Ava M9 Pro reaalajavoog, otsi klassi person ja hoia iga katkematu
+# tuvastusperioodi aega. Pärast 5 sekundi täitumist lisatakse üks logirida.
+python3 /lab-scripts/detectnet_person_5s_log.py \
+  --input /dev/video1 \
+  --log /detectnet-results/person-events.log \
+  --network ssd-mobilenet-v2 \
+  --threshold 0.50 \
+  --duration 5
+```
+
+Mida see käsk teeb: `--input /dev/video1` avab USB-kaamera. Skript mõõdab kestust `time.monotonic()` kellaga, et süsteemikella muutmine ei rikuks viiesekundilist vahemikku. Logis kasutatakse eraldi päriskella ajatempliga tuvastuse algushetke.
+
+Miks see vajalik on: üksik kaader võib olla valeleid. Ajanõue teeb reegli rangemaks ja muudab olukorra "inimene on kaamera ees" selgelt mõõdetavaks.
+
+Oodatud tulemus: kui inimene püsib vaates ja mudel tuvastab teda igas järjestikuses kaadris, lisab skript faili `person-events.log` rea kujul:
+
+```text
+2026-01-01T12:34:56+02:00 Inimene tuvastatud!
+```
+
+```bash
+# Näita logi viimased sündmused ilma kogu faili läbi kerimata.
+tail -n 5 /detectnet-results/person-events.log
+```
+
+Mida see käsk teeb: `tail -n 5` näitab logifaili viimast viit rida. Kui faili veel ei ole, siis pole viiesekundiline tingimus veel täitunud.
+
+Reegel on esimeses versioonis tahtlikult range: üks kaader, kus `person` puudub, nullib taimeri. See teeb koodi lihtsaks ja näitab hästi, miks päris süsteem vajab hiljem lubatud katkestuste aega, kaamera vaateala ning paremat mudelit.
+
+Sama lahendus töötab ka teiste Lab 002 videoallikatega. Asenda ainult `--input` väärtus:
+
+- IMX219 jaoks `csi://0`;
+- RTSP jaoks eelnevates jaotistes turvaliselt loodud `"$RTSP_URL"`;
+- salvestatud video jaoks näiteks `/detectnet-results/minu-video.mp4`.
+
+Kui avasid selle ülesande jaoks uue konteineri, loo RTSP muutujad uuesti Lab 002 RTSP jaotise `read` käskudega **selles uues konteineris**. Konteineri sulgemisel kaovad seansimuutujad tahtlikult.
+
+Soovi korral lisa käsule `--output /detectnet-results/person-detect.mp4`. Siis salvestab skript ka märgendatud videofaili; see on kasulik, kui tahad võrrelda logirida tegeliku kaadriga.
+
+Lahenduse lähtekood on [`scripts/detectnet_person_5s_log.py`](../scripts/detectnet_person_5s_log.py). Loe kommentaare ajamõõtmise, järjestuse lähtestamise ja `event_written` lipu juures. Viimane tagab, et katkematu viiesekundilise perioodi kohta ei lisata uut rida igas kaadris.
 
 ## Järgmine samm: NanoOWL
 
