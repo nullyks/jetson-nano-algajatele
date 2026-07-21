@@ -1,6 +1,6 @@
 # Riistvara ja algseadistus
 
-Enne seda õppetükki tee üks tarkvara algseisu rada:
+Enne seda õppetükki tee läbi üks tarkvara algseisu radadest:
 
 - [Puhas paigaldus tühjale kettale](01a-puhas-paigaldus-tuhjale-kettale.md)
 - [Edasimüüja kettatõmmise kontroll ja uuendamine](01b-edasimuuja-image-kontroll-ja-uuendamine.md)
