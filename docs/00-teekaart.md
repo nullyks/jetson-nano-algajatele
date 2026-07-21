@@ -118,14 +118,14 @@ Alusta lihtsast:
 
 Alusta: [Lab 003](../labs/003-esimene-kohalik-llm.md)
 
-## 6. Tase: arvutinägemine + LLM koos
+## 6. Tase: raalnägemine + LLM koos
 
 Eesmärk: kaamera kirjeldab maailma ja LLM aitab teha otsust või seletust. Siin tähendab LLM suurt keelemudelit (large language model).
 
 Näide:
 
-1. CV mudel leiab objektid.
+1. Raalnägemismudel leiab objektid.
 2. Reeglimootor teeb toore sündmuse: `person_detected_near_table`.
 3. LLM vormistab inimesele arusaadava selgituse: "Kaamera näeb inimest laua juures; kindlus 0.83; olukord kestnud 4.2 s."
 
-Alguses ära lase LLM-il otsustada kogu rääkimata maailma üle. Hoia CV, reeglid ja LLM eraldi, et saaksid aru, mis osa eksis.
+Alguses ära lase LLM-il otsustada kogu rääkimata maailma üle. Hoia raalnägemismudel, reeglid ja LLM eraldi, et saaksid aru, mis osa eksis.

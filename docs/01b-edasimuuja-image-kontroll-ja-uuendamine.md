@@ -494,7 +494,7 @@ Tee puhas paigaldus, kui:
 - APT allikad on segased või vastuolulised;
 - süsteemis on tundmatuid kasutajaid või paroole;
 - uuendused ebaõnnestuvad;
-- JetPack on liiga vana sinu CV või LLM katsete jaoks;
+- JetPack on liiga vana sinu raalnägemise või LLM-i katsete jaoks;
 - edasimüüja eriseadistusi pole tegelikult vaja.
 
 ## Allikad

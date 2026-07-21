@@ -52,6 +52,8 @@ Kontrollitud: 2026-07-19.
   https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_Installation.html
 - jetson-stats
   https://github.com/rbonghi/jetson_stats
+- GStreamer documentation
+  https://gstreamer.freedesktop.org/documentation/
 - YAHBOOM Jetson Orin Nano Super repository
   https://www.yahboom.net/study/Orin-Nano-SUPER
 

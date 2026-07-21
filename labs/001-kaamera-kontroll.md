@@ -1,83 +1,256 @@
-# Lab 001: kaamera kontroll
+# Lab 001: kaamera kontroll ja esimene kaader
 
 ## Mida õpid
 
-- Leiad, kas Jetson näeb kaamerat.
-- Saad esimese pildi või videovoo.
-- Kirjutad üles kaamera kontrolli tulemuse.
+- Kontrollid, milline videoseade vastab millisele kaamerale.
+- Salvestad ühe kaadri IMX219, USB veebikaamera ja IP/RTSP kaamera voost.
+- Eristad V4L2 seadet, CSI/Arguse kaamerat ja RTSP võrguvoogu.
+- Hoidud kaamera kasutajanime, parooli ja piltide kogemata avalikustamisest.
 
 ## Eeldused
 
-- Jetson käivitub.
-- Saad terminali avada.
-- Kaamera on ühendatud.
+- Jetson käivitub ja saad selles terminali avada.
+- IMX219 on ühendatud ning sinu seadmes ilmub see eeldatavalt seadmena `/dev/video0`.
+- USB veebikaamera M9 Pro on ühendatud ning sinu seadmes ilmub see eeldatavalt seadmena `/dev/video1`.
+- IP-kaamera RTSP voog on samast võrgust kättesaadav.
 
-## Samm 1: versioonid
+Videoseadmete numbrid ei ole püsivad. USB seadmete lisamine, eemaldamine või käivitusjärjekord võib muuta, milline kaamera on `/dev/video0` ja milline `/dev/video1`. Seepärast kontrolli seost iga uue seadistuse järel, mitte ära usalda ainult numbrit.
+
+## Privaatsus enne alustamist
+
+RTSP aadress võib sisaldada kasutajanime, parooli ja kohtvõrgu IP-aadressi. Ära kirjuta päris RTSP aadressi, kasutajaandmeid ega kaamerapilte GitHubi, päevikusse või vestlusesse. Selles laboris kasutatakse ainult kohatäiteid, näiteks:
+
+```text
+rtsp://KASUTAJA:PAROOL@KAAMERA_IP:554/stream1
+```
+
+Kõik siin salvestatavad pildid lähevad Jetsoni kohalikku kataloogi `~/jetson-camera-tests`. Avalikku reposse lisa pilt ainult siis, kui oled kontrollinud, et see ei sisalda inimesi, eluruumi, dokumente ega muud tundlikku teavet.
+
+## Samm 1: kontrolli süsteemi ja tööriistu
 
 Jetsonis:
 
 ```bash
 cat /etc/nv_tegra_release
 uname -a
-```
-
-Kirjuta vastus päevikusse.
-
-## Samm 2: kas kaamera on olemas?
-
-```bash
-ls /dev/video*
-```
-
-Kui tuleb midagi nagu `/dev/video0`, on esimene märk hea.
-
-Lisainfo:
-
-```bash
 sudo apt update
-sudo apt install -y v4l-utils
-v4l2-ctl --list-devices
-```
-
-## Samm 3A: CSI/MIPI kaamera test
-
-Näiteks IMX219 kaamera puhul proovi:
-
-```bash
-gst-launch-1.0 nvarguscamerasrc ! \
-  'video/x-raw(memory:NVMM),width=1280,height=720,framerate=30/1' ! \
-  nvvidconv ! nveglglessink
-```
-
-Kui töötad SSH kaudu ja ekraaniakent avada ei saa, salvesta üks kaader failina:
-
-```bash
+sudo apt install -y v4l-utils gstreamer1.0-tools gstreamer1.0-plugins-base gstreamer1.0-plugins-good
 mkdir -p ~/jetson-camera-tests
-gst-launch-1.0 -e nvarguscamerasrc num-buffers=1 ! \
+```
+
+Mida need käsud teevad:
+
+- `cat /etc/nv_tegra_release` kuvab Jetson Linuxi väljalaske.
+- `uname -a` kuvab Linuxi tuuma andmed.
+- `sudo apt update` värskendab paketinimekirju, kuid ei muuda veel paigaldatud tarkvara.
+- `sudo apt install ...` paigaldab V4L2 uurimise tööriista ja GStreameri põhilised käsureaelemendid.
+- `mkdir -p ~/jetson-camera-tests` loob sinu kodukataloogi testpiltide kausta; `-p` lubab käsu ohutult uuesti käivitada.
+
+Miks see vajalik on: kaamera käsud sõltuvad JetPackist ning `v4l2-ctl` näitab, milliseid vorminguid V4L2 seadmed tegelikult toetavad.
+
+Oodatud tulemus: `v4l2-ctl` ja `gst-launch-1.0` on leitavad ning testpiltide jaoks on olemas kohalik kataloog.
+
+## Samm 2: seo seadmenumber päris kaameraga
+
+```bash
+ls -l /dev/video*
+v4l2-ctl --list-devices
+v4l2-ctl --device=/dev/video0 --all
+v4l2-ctl --device=/dev/video1 --all
+```
+
+Mida need käsud teevad:
+
+- `ls -l /dev/video*` loetleb Jetsoni videoseadmefailid.
+- `v4l2-ctl --list-devices` rühmitab videoseadmed kaamera või draiveri nime järgi.
+- kaks `--all` käsku näitavad vastavalt seadmete `/dev/video0` ja `/dev/video1` omadusi.
+
+Miks see vajalik on: nii kinnitad, et IMX219 ja M9 Pro on õigete seadmenumbritega seotud. Mõni kaamera või kodeerimisplokk võib luua lisaks veel videoseadmeid.
+
+Oodatud tulemus: sinu seadmes peaks IMX219 olema seotud `/dev/video0` ja M9 Pro `/dev/video1` seadmega. Kui nimed või numbrid erinevad, kasuta järgmistes käskudes `v4l2-ctl --list-devices` tulemusest leitud õiget seadet.
+
+Kirjuta päevikusse ainult kaamera mudel ja seadmenumber, näiteks `IMX219 -> /dev/video0`. Ära lisa täit `v4l2-ctl --all` väljundit avalikku reposse, sest see võib sisaldada seadme seerianumbrit.
+
+## Samm 3: IMX219 kaader seadmest `/dev/video0`
+
+Kõigepealt vaata, milliseid vorminguid kaamera pakub:
+
+```bash
+v4l2-ctl --device=/dev/video0 --list-formats-ext
+```
+
+Mida see käsk teeb: kuvab seadme toetatud piksli vormingud, eraldusvõimed ja kaadrisagedused.
+
+Miks see vajalik on: ainult toetatud vormingut kasutav GStreameri toru saab kokkulepitud pildi kätte.
+
+Oodatud tulemus: üks või mitu vormingut. Kui selles on sinu soovitud eraldusvõime, võid selle soovi korral järgmise käsu `video/x-raw` ossa lisada.
+
+Salvesta üks kaader:
+
+```bash
+gst-launch-1.0 -e v4l2src device=/dev/video0 num-buffers=1 ! \
+  videoconvert ! jpegenc ! \
+  filesink location="$HOME/jetson-camera-tests/imx219-video0.jpg"
+file "$HOME/jetson-camera-tests/imx219-video0.jpg"
+```
+
+Mida see käsurühm teeb:
+
+- `v4l2src device=/dev/video0` loeb pilti IMX219 V4L2 seadmest.
+- `num-buffers=1` peatab voo pärast esimest kaadrit.
+- `videoconvert` teisendab toorkaadri JPEG kodeerijale sobivaks vorminguks.
+- `jpegenc` kodeerib kaadri JPEG failiks.
+- `filesink location=...` kirjutab faili ainult Jetsoni kohalikku testkataloogi.
+- `file ...` kontrollib, et tulemuseks on päriselt JPEG pildifail.
+
+Miks see vajalik on: see on kõige väiksem korratav kontroll, et kaamera, draiver ja GStreameri pilditee töötavad koos.
+
+Oodatud tulemus: käsk lõpeb pärast üht kaadrit ning `file` kirjeldab tulemust JPEG pildina.
+
+Kui IMX219 ei ole sinu image'is V4L2 seadmena kasutatav, kuid NVIDIA Arguse kaameraplugin on olemas, proovi alternatiivi:
+
+```bash
+gst-inspect-1.0 nvarguscamerasrc
+gst-launch-1.0 -e nvarguscamerasrc sensor-id=0 num-buffers=1 ! \
   'video/x-raw(memory:NVMM),width=1280,height=720,framerate=30/1' ! \
   nvvidconv ! 'video/x-raw,format=I420' ! jpegenc ! \
-  filesink location=~/jetson-camera-tests/imx219-test.jpg
-file ~/jetson-camera-tests/imx219-test.jpg
+  filesink location="$HOME/jetson-camera-tests/imx219-argus.jpg"
 ```
 
-## Samm 3B: USB kaamera test
+Mida see käsurühm teeb: esimene käsk kontrollib, kas NVIDIA Arguse kaameraelement on paigaldatud. Teine loeb IMX219 kaadri Arguse kaudu, teisendab selle JPEG jaoks ja salvestab ühe pildi.
+
+Miks see vajalik on: mõnes Jetsoni seadistuses jõuab CSI/IMX219 kaamera GStreamerisse Arguse, mitte `/dev/video*` kaudu.
+
+Oodatud tulemus: `gst-inspect-1.0` näitab `nvarguscamerasrc` andmeid ning teine käsk loob faili `imx219-argus.jpg`. Kui esimene käsk ütleb, et elementi ei leitud, ära paigalda juhuslikku pluginat; kontrolli JetPacki ja kaamera draiverit.
+
+## Samm 4: USB veebikaamera M9 Pro kaader seadmest `/dev/video1`
+
+Kontrolli esmalt M9 Pro tegelikke vorminguid:
 
 ```bash
-gst-launch-1.0 v4l2src device=/dev/video0 ! \
-  videoconvert ! autovideosink
+v4l2-ctl --device=/dev/video1 --list-formats-ext
 ```
+
+Mida see käsk teeb: kuvab M9 Pro pakutavad vormingud, näiteks `MJPG` või `YUYV`, ning nende lubatud eraldusvõimed ja kaadrisagedused.
+
+Miks see vajalik on: USB veebikaamerad pakuvad tihti mitut vormingut. Sobimatu vorming, eraldusvõime või kaadrisagedus annab GStreameris läbirääkimisvea.
+
+Oodatud tulemus: vali üks loetletud vorming ja kasuta täpselt selle juurde kuuluvat laiust, kõrgust ning kaadrisagedust järgmises käsus.
+
+Kui loendis on `MJPG`, asenda näites olevad `1920`, `1080` ja `30` sinu loendis nähtud väärtustega ning salvesta kaader nii:
+
+```bash
+gst-launch-1.0 -e v4l2src device=/dev/video1 num-buffers=1 ! \
+  'image/jpeg,width=1920,height=1080,framerate=30/1' ! \
+  jpegparse ! filesink location="$HOME/jetson-camera-tests/m9-pro-mjpg.jpg"
+file "$HOME/jetson-camera-tests/m9-pro-mjpg.jpg"
+```
+
+Mida see käsurühm teeb: `v4l2src` loeb M9 Pro ühe kaadri, JPEG kapsel kirjeldab MJPEG vormingut, `jpegparse` korrastab JPEG voo ning `filesink` kirjutab pildi faili.
+
+Miks see vajalik on: MJPEG korral on kaamera kaader juba JPEG kujul, mistõttu pole seda vaja enne salvestamist lahti kodeerida.
+
+Oodatud tulemus: loodud fail on JPEG pilt. Kui GStreamer teatab, et kapslid ei sobi, kontrolli uuesti `--list-formats-ext` väljundit ja asenda näite parameetrid kaamera tegelike väärtustega.
+
+Kui loendis on `YUYV`, kasuta selle vormingu jaoks seda varianti:
+
+```bash
+gst-launch-1.0 -e v4l2src device=/dev/video1 num-buffers=1 ! \
+  'video/x-raw,format=YUY2,width=1280,height=720,framerate=30/1' ! \
+  videoconvert ! jpegenc ! \
+  filesink location="$HOME/jetson-camera-tests/m9-pro-yuyv.jpg"
+file "$HOME/jetson-camera-tests/m9-pro-yuyv.jpg"
+```
+
+Mida see käsurühm teeb: M9 Pro annab ühe pakkimata YUYV kaadri, `videoconvert` teisendab selle JPEG kodeerijale sobivaks ning `jpegenc` salvestab pildi JPEG-na.
+
+Miks see vajalik on: pakkimata YUYV ei ole valmis pildifail; see tuleb enne faili salvestamist kodeerida.
+
+Oodatud tulemus: loodud fail on JPEG pilt. Ka siin peavad eraldusvõime ja kaadrisagedus vastama M9 Pro tegelikule vorminguloendile.
+
+## Samm 5: IP/RTSP kaamerast kaader
+
+Sisesta RTSP ühenduse andmed nii, et parool ei läheks käsuajalukku:
+
+```bash
+read -rp 'RTSP kasutaja: ' RTSP_USER
+read -rsp 'RTSP parool: ' RTSP_PASSWORD
+printf '\n'
+read -rp 'RTSP kaamera aadress: ' RTSP_HOST
+RTSP_URL="rtsp://${RTSP_USER}:${RTSP_PASSWORD}@${RTSP_HOST}:554/stream1"
+```
+
+Mida need käsud teevad:
+
+- kaks `read` käsku küsivad kasutajanime ja parooli eraldi; `-s` peidab parooli sisestuse.
+- `printf '\n'` lisab pärast peidetud parooli sisestamist uue rea.
+- kolmas `read` küsib IP-aadressi või DNS-nime.
+- viimane rida koostab praeguse terminaliseansi jaoks RTSP aadressi kujul `rtsp://KASUTAJA:PAROOL@KAAMERA_IP:554/stream1`.
+
+Miks see vajalik on: parooli kirjutamine otse käsusse jätaks selle terminali ajalukku. Kohatäidetega koostatud muutuja on õpetamiseks turvalisem.
+
+Oodatud tulemus: ükski käsk ei kuva parooli. Muutuja kehtib ainult selles terminaliaknas. Ära kuva `RTSP_URL` väärtust ega kopeeri seda päevikusse.
+
+Testi H.264 videovoo vastuvõttu ilma pilti salvestamata:
+
+```bash
+gst-launch-1.0 rtspsrc location="$RTSP_URL" protocols=tcp latency=200 ! \
+  rtph264depay ! h264parse ! nvv4l2decoder ! fakesink sync=false
+```
+
+Mida see käsk teeb:
+
+- `rtspsrc` avab RTSP voo; `protocols=tcp` eelistab TCP-d, mis on kohtvõrgus sageli töökindlam kui UDP.
+- `latency=200` lubab 200 ms puhvrit, et väikesed võrgukõikumised ei katkestaks kohe videot.
+- `rtph264depay` ja `h264parse` võtavad RTP pakettidest välja H.264 videovoo.
+- `nvv4l2decoder` kasutab Jetsoni riistvaralist videodekoodrit.
+- `fakesink sync=false` võtab dekodeeritud kaadrid vastu ilma ekraanile kuvamata.
+
+Miks see vajalik on: enne pildi salvestamist eristad sellega võrgu, autentimise ja videokodeki probleemi failikirjutamise probleemist.
+
+Oodatud tulemus: käsk jääb videot vastu võtma. Peata test klahvidega `Ctrl+C`. Kui kaamera dokumentatsioon või turvaliselt kontrollitud tehniline teave näitab `H265` või `HEVC` videot, asenda torus `rtph264depay ! h264parse` osaga `rtph265depay ! h265parse`. Ära kopeeri RTSP käsu täit veaväljundit avalikku materjali, sest see võib sisaldada ühenduse aadressi.
+
+Salvesta H.264 voost üks kaader:
+
+```bash
+gst-launch-1.0 -e rtspsrc location="$RTSP_URL" protocols=tcp latency=200 ! \
+  rtph264depay ! h264parse ! nvv4l2decoder ! \
+  nvvidconv ! 'video/x-raw,format=I420' ! jpegenc snapshot=true ! \
+  filesink location="$HOME/jetson-camera-tests/rtsp-frame.jpg"
+```
+
+Mida see käsk teeb: RTSP voog depakendatakse ja dekodeeritakse Jetsoni riistvaraga, `nvvidconv` teisendab kaadri JPEG kodeerijale sobivaks, `jpegenc snapshot=true` lõpetab toru pärast esimese JPEG-i kodeerimist ning `filesink` kirjutab kohaliku pildifaili.
+
+Miks see vajalik on: sama pildifaili saab hiljem kasutada raalnägemismudeli sisendina ilma võrgukaamerat iga katse ajal uuesti avamata.
+
+Oodatud tulemus: pärast esimese täieliku videokaadri saabumist luuakse fail `rtsp-frame.jpg` ja toru lõpeb ise. Kontrolli tulemust käsuga `file "$HOME/jetson-camera-tests/rtsp-frame.jpg"`.
+
+Pärast testi eemalda tundlikud muutujad praegusest terminaliseansist:
+
+```bash
+unset RTSP_USER RTSP_PASSWORD RTSP_HOST RTSP_URL
+```
+
+Mida see käsk teeb: kustutab nimetatud muutujad praeguse terminaliakna mälust.
+
+Miks see vajalik on: vähendad võimalust, et keegi samas avatud terminalis RTSP aadressi kogemata näeb või järgmine käsk seda kasutab.
+
+Oodatud tulemus: käsk ei kuva midagi. Järgmine RTSP käsk vajab ühenduse andmete uuesti sisestamist.
+
+RTSP kaamerale kasuta võimaluse korral eraldi piiratud õigustega kasutajakontot. Parooliga RTSP aadress võib protsessiloendis nähtav olla, seega ära kasuta selleks oma Jetsoni, arvuti ega muu olulise teenuse parooli.
 
 ## Kontroll
 
-Pane kirja:
+Pane päevikusse ainult mittetundlik kokkuvõte:
 
 ```text
-Kaamera:
-Port:
-Kas /dev/video0 tekkis:
-Kas pilt avanes:
-Resolutsioon:
-FPS:
+IMX219 seade: /dev/video0 või muu tuvastatud seade
+IMX219 kaader salvestati: jah / ei
+M9 Pro seade: /dev/video1 või muu tuvastatud seade
+M9 Pro vorming: MJPG / YUYV / muu
+M9 Pro kaader salvestati: jah / ei
+RTSP kodek: H.264 / H.265 / muu
+RTSP kaader salvestati: jah / ei
 Probleemid:
 ```
 
@@ -85,16 +258,25 @@ Probleemid:
 
 Kontrolli:
 
-- kas lintkaabel on õigetpidi;
-- kas kaamera toetab Jetsonit;
-- kas proovid CSI- või USB-kaamera käsku;
-- kas teine resolutsioon töötab;
-- kas `dmesg` näitab kaameraga seotud viga.
+- kas IMX219 lintkaabel on õigetpidi ja kaamera on Jetsoni poolt toetatud;
+- kas `/dev/video0` ja `/dev/video1` seos vastab tegelikule kaamerale;
+- kas USB veebikaamera vorming, eraldusvõime ja kaadrisagedus pärinevad `v4l2-ctl --list-formats-ext` väljundist;
+- kas RTSP voog on H.264 või H.265 ning kas kasutad sellele vastavat depakendajat;
+- kas Jetson ja IP-kaamera on samas usaldatud võrgus;
+- kas RTSP kasutajal on selle voo lugemise õigus.
+
+Kaameradraiveri hiljutiste teadete vaatamiseks:
 
 ```bash
 dmesg | tail -80
 ```
 
+Mida see käsk teeb: kuvab kerneli teadete viimased 80 rida.
+
+Miks see vajalik on: CSI kaamera, USB ühenduse või draiveri tõrge jätab sageli kerneli logisse selgema põhjuse kui GStreamer.
+
+Oodatud tulemus: näed hiljutisi teateid. Ära avalda täit väljundit puhastamata, sest selles võivad olla seadme seerianumber, võrguteave või muud kohalikud andmed.
+
 ## Tulemus
 
-Lisa päevikusse kohaliku testpildi failinimi või mitteavalik viide. Avalikku reposse lisa pilt ainult siis, kui oled kontrollinud, et selles ei ole inimesi, eluruumi, dokumente ega muid tundlikke andmeid. Päris kaamerapilte selles repos vaikimisi ei avaldata.
+Sul on vähemalt üks kohalik JPEG kaader igast toimivast kaameraallikast. Järgmine samm on kasutada üht neist piltidest objektituvastuse või muu raalnägemiskatse sisendina.

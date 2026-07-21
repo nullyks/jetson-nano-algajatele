@@ -6,7 +6,7 @@ See repo on eestikeelne õppematerjalide ja katsete kogu NVIDIA Jetson Orin Nano
 
 ## Eesmärgid
 
-1. Arvutinägemine (computer vision): kasutada kaamerat objektide, tegevuste ja olukordade tuvastamiseks.
+1. Raalnägemine (computer vision): kasutada kaamerat objektide, tegevuste ja olukordade tuvastamiseks.
 2. Kohalikud suured keelemudelid (LLM-id): jooksutada väiksemaid keelemudeleid Jetsoni peal ilma pilveteenuseta.
 
 ## Kuidas seda repot kasutada
@@ -26,7 +26,7 @@ See repo on eestikeelne õppematerjalide ja katsete kogu NVIDIA Jetson Orin Nano
    - [Edasimüüja image'i kontroll ja uuendamine](docs/01b-edasimuuja-image-kontroll-ja-uuendamine.md), kui seade tuli valmis image'iga.
 3. [SSH võtmega ühendus Windowsis ja macOSis](docs/01c-ssh-votmega-uhendus-windows-macos.md), kui hakkad Jetsonit oma arvutist haldama.
 4. [Riistvara ja algseadistus](docs/01-riistvara-ja-algseadistus.md)
-5. [Kaamera ja arvutinägemine](docs/02-kaamera-ja-computer-vision.md)
+5. [Kaamera ja raalnägemine](docs/02-kaamera-ja-computer-vision.md)
 6. [Kohalikud LLM-id](docs/03-kohalikud-llmid.md)
 7. [Õppematerjali kirjutamise muster](docs/04-oppematerjali-muster.md)
 

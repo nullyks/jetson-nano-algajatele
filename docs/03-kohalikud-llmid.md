@@ -78,7 +78,7 @@ Võrdle mudeleid sama promptikomplektiga:
 3. Tuvasta sellest lausest tegevus: "Inimene seisab ukse ees ja hoiab pakki."
 ```
 
-## LLM + computer vision
+## LLM + raalnägemine
 
 LLM ei pea alguses pilti otse nägema. Esimene praktiline arhitektuur:
 
