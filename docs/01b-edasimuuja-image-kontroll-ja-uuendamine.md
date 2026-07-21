@@ -1,18 +1,18 @@
-# Edasimüüja image'i kontroll ja uuendamine
+# Edasimüüja kettatõmmise kontroll ja uuendamine
 
 ## Mida õpid
 
-- Teed kindlaks, mis tarkvara edasimüüja image'is tegelikult on.
+- Teed kindlaks, mis tarkvara edasimüüja kettatõmmises tegelikult on.
 - Salvestad algse seisu enne muutmist.
 - Uuendad süsteemi sama JetPacki haru piires.
 - Vahetad vaikimisi paroolid ja kontrollid võrgu kaudu avatud teenused.
-- Otsustad, kas image on õppimiseks piisavalt usaldusväärne või tasub teha puhas paigaldus.
+- Otsustad, kas kettatõmmis on õppimiseks piisavalt usaldusväärne või tasub teha puhas paigaldus.
 
-See rada sobib siis, kui seade tuli YAHBOOMi, Hiwonderi või muu edasimüüja valmis image'iga.
+See rada sobib siis, kui seade tuli YAHBOOMi, Hiwonderi või muu edasimüüja valmis kettatõmmisega.
 
 ## Kõige olulisem otsus
 
-Kui image'i päritolu või paroolid on teadmata, on kõige turvalisem rada puhas ametlik paigaldus. Edasimüüja image'it tasub alles hoida siis, kui vajad selle sees olevaid kaamera-, robootika-, GPIO-, ekraani- või demo-seadistusi.
+Kui kettatõmmise päritolu või paroolid on teadmata, on kõige turvalisem rada puhas ametlik paigaldus. Edasimüüja kettatõmmist tasub alles hoida siis, kui vajad selle sees olevaid kaamera-, robootika-, GPIO-, ekraani- või demo-seadistusi.
 
 Kui kasutad YAHBOOMi või sarnast komplekti, otsi enne muutmist üles edasimüüja taastamisjuhend ja varukoopia tegemise juhend. Mõnel komplektil on eraldi juhised "original system", "factory system", SSD varundamise ja taastamise jaoks.
 
@@ -24,17 +24,17 @@ Miinimum:
 
 - kopeeri oma failid mujale;
 - tee päevikusse pilt või tekst kõigist versioonidest;
-- kui võimalik, tee kogu kettast image või kasuta edasimüüja varundusjuhendit.
+- kui võimalik, tee kogu kettast kettatõmmis või kasuta edasimüüja varundusjuhendit.
 
 Päevikusse:
 
 ```text
 Kuupäev:
 Edasimüüja:
-Image'i nimi või allikas:
+Kettatõmmise nimi või allikas:
 Kas mul on taastamisjuhend:
 Kas mul on varukoopia:
-Miks jätan edasimüüja image'i alles:
+Miks jätan edasimüüja kettatõmmise alles:
 ```
 
 ## Samm 1: kogu süsteemi inventuur
@@ -86,7 +86,7 @@ NVIDIA pakettide seis:
 
 Mida see käsurühm teeb: `dpkg-query` küsib valitud NVIDIA pakettide paigaldusseisu, `apt-cache policy` näitab nende pakettide saadaolevaid versioone ja APT allikat ning `apt list --installed | grep -E ...` leiab seotud paigaldatud paketid. `2>/dev/null || true` peidab ootuspärase vea juhul, kui mõni pakett või tööriist puudub, ning `tee` salvestab tulemuse.
 
-Miks see vajalik on: edasimüüja image'is võib CUDA, TensorRT või JetPack olla paigaldatud teistmoodi kui ametlikus tervikpaigalduses.
+Miks see vajalik on: edasimüüja kettatõmmises võib CUDA, TensorRT või JetPack olla paigaldatud teistmoodi kui ametlikus tervikpaigalduses.
 
 Oodatud tulemus: fail `nvidia-packages.txt`, kus on vähemalt osa NVIDIA pakettidest või selge märge, et konkreetne pakett puudub. Puuduv `nvidia-jetpack` ei tähenda veel automaatselt, et süsteem on katki.
 
@@ -145,7 +145,7 @@ getent group sudo
 
 Mida need käsud teevad: esimene kuvab tavalised kasutajakontod koos kasutajatunnuse, kodukataloogi ja sisselogimiskestaga. Teine näitab, kellel on `sudo` rühma kaudu administraatoriõigused.
 
-Miks see vajalik on: edasimüüja image võib sisaldada ootamatuid kontosid või vana vaikimisi kontot. Enne konto muutmist pead teadma, milline kasutaja tegelikult haldusõigusi omab.
+Miks see vajalik on: edasimüüja kettatõmmis võib sisaldada ootamatuid kontosid või vana vaikimisi kontot. Enne konto muutmist pead teadma, milline kasutaja tegelikult haldusõigusi omab.
 
 Oodatud tulemus: nimekiri kontodest. Ära kopeeri seda muutmata kujul avalikku reposse, sest see sisaldab kasutajanimesid ja kodukataloogide nimesid.
 
@@ -161,7 +161,7 @@ Miks see vajalik on: edasimüüja vaikimisi või ajutine parool ei tohi jääda 
 
 Oodatud tulemus: süsteem kinnitab parooli muutmist pärast uue parooli kaks korda sisestamist. Ära kirjuta parooli päevikusse ega GitHubi.
 
-Kui image tuli vaikimisi kasutajaga nagu `yahboom`, `jetson`, `ubuntu` või muu edasimüüja konto, tee enne kustutamist või lukustamist endale eraldi administraatorikasutaja ja testi, et `sudo` töötab.
+Kui kettatõmmis tuli vaikimisi kasutajaga nagu `yahboom`, `jetson`, `ubuntu` või muu edasimüüja konto, tee enne kustutamist või lukustamist endale eraldi administraatorikasutaja ja testi, et `sudo` töötab.
 
 Näide:
 
@@ -219,7 +219,7 @@ Oodatud tulemus: üks või mitu teenust. Hoia täisväljund kohalikult, sest see
 
 Algaja jaoks on hea küsimus: "Kas ma tean, miks see teenus töötab?"
 
-Vaata eriti teenuseid, mis kuulavad aadressil `0.0.0.0` või `[::]`, sest need on nähtavad ka teistest sama võrgu seadmetest. Edasimüüja image'itel võib olla vaikimisi avatud näiteks JupyterLab, VNC, RDP, CUPS, RPC või roboti/demotarkvara teenuseid. See ei tähenda automaatselt, et kõik tuleb kinni panna, aga iga avatud port peab olema teadlik otsus.
+Vaata eriti teenuseid, mis kuulavad aadressil `0.0.0.0` või `[::]`, sest need on nähtavad ka teistest sama võrgu seadmetest. Edasimüüja kettatõmmistes võivad olla vaikimisi avatud näiteks JupyterLab, VNC, RDP, CUPS, RPC või roboti/demotarkvara teenused. See ei tähenda automaatselt, et kõik tuleb kinni panna, aga iga avatud port peab olema teadlik otsus.
 
 Kui SSH on vaja, kontrolli teenuse seisu:
 
@@ -275,7 +275,7 @@ Mida need seaded teevad:
 - `PasswordAuthentication no` keelab tavalise parooliga SSH sisselogimise.
 - `KbdInteractiveAuthentication no` keelab paroolilaadse klaviatuuri-interaktiivse sisselogimise.
 
-Miks see vajalik on: edasimüüja image võib tulla avalikult teada kasutajanime ja parooliga. Kui võtmega sisselogimine juba töötab, on parooliga SSH keelamine üks olulisemaid samme seadme turvalisemaks tegemisel.
+Miks see vajalik on: edasimüüja kettatõmmis võib tulla avalikult teada kasutajanime ja parooliga. Kui võtmega sisselogimine juba töötab, on parooliga SSH keelamine üks olulisemaid samme seadme turvalisemaks tegemisel.
 
 Kontrolli enne laadimist, et seadistusfailis pole kirjaviga:
 
@@ -357,7 +357,7 @@ Oluline:
 - ära muuda NVIDIA `r36.x` või `r39.x` APT allikat uueks haruks ainult oletuse põhjal;
 - suurema JetPacki või Jetson Linuxi versioonivahetuse puhul järgi NVIDIA dokumentatsiooni või tee puhas paigaldus.
 
-Kui `apt` küsib, kas asendada kohaliku konfiguratsioonifaili NVIDIA versiooniga, tee enne paus. Edasimüüja image'is võib kohalik fail sisaldada kaamera, carrier board'i või demo jaoks vajalikku muudatust. Kirjuta failinimi päevikusse ja otsusta teadlikult.
+Kui `apt` küsib, kas asendada kohaliku konfiguratsioonifaili NVIDIA versiooniga, tee enne paus. Edasimüüja kettatõmmises võib kohalik fail sisaldada kaamera, carrier board'i või demo jaoks vajalikku muudatust. Kirjuta failinimi päevikusse ja otsusta teadlikult.
 
 ## Samm 6: kontrolli JetPacki komponentide olemasolu
 
@@ -384,7 +384,7 @@ apt-get -s install nvidia-jetpack
 
 Mida see käsk teeb: `-s` ehk simulatsioon arvutab, mida paigaldus teeks, kuid ei muuda ühtegi paketti ega faili.
 
-Miks see vajalik on: edasimüüja image'is võib tervikpaketi lisamine kaasa tuua rohkem muudatusi kui algaja eeldab.
+Miks see vajalik on: edasimüüja kettatõmmises võib tervikpaketi lisamine kaasa tuua rohkem muudatusi kui algaja eeldab.
 
 Oodatud tulemus: APT näitab kavandatavad lisatavad, uuendatavad ja eemaldatavad paketid. Sulge simulatsioon ja loe loend enne päris paigalduse otsust.
 
@@ -402,7 +402,7 @@ Miks see vajalik on: seda rada kasuta ainult siis, kui eelmine simulatsioon näi
 
 Oodatud tulemus: paigaldus küsib kinnitust ja lõpeb veata. Taaskäivituse järel korda vähemalt Jetson Linuxi ning `nvidia-jetpack` kontrolli.
 
-Kui simulatsioon näitab `unmet dependencies`, versioonikonflikte või katset vanemaid CUDA, cuDNN, TensorRT või container-toolkit pakette peale suruda, ära jätka pimesi. Edasimüüja image võib kasutada uuemaid või teistest NVIDIA repodest paigaldatud komponente ning `nvidia-jetpack` metapaketi puudumine ei tähenda siis automaatselt, et süsteem on katki.
+Kui simulatsioon näitab `unmet dependencies`, versioonikonflikte või katset vanemaid CUDA, cuDNN, TensorRT või container-toolkit pakette peale suruda, ära jätka pimesi. Edasimüüja kettatõmmis võib kasutada uuemaid või teistest NVIDIA repodest paigaldatud komponente ning `nvidia-jetpack` metapaketi puudumine ei tähenda siis automaatselt, et süsteem on katki.
 
 Kirjuta päevikusse:
 
@@ -464,7 +464,7 @@ sudo ufw status verbose
 
 Mida need käsud teevad: `ufw` paigaldab lihtsama tulemüürihalduse. Järgmised kaks käsku keelavad vaikimisi sisse tuleva ja lubavad välja mineva liikluse. SSH reegel lubab TCP porti 22 ainult sinu määratud võrgust. `enable` lülitab tulemüüri sisse ning `status verbose` näitab lõplikke reegleid.
 
-Miks see vajalik on: edasimüüja image'is võivad mittevajalikud teenused kuulata kogu võrgule. Vaikimisi keelamine koos teadliku SSH reegliga vähendab ründepinda.
+Miks see vajalik on: edasimüüja kettatõmmises võivad mittevajalikud teenused kuulata kogu võrgule. Vaikimisi keelamine koos teadliku SSH reegliga vähendab ründepinda.
 
 Oodatud tulemus: `status verbose` näitab aktiivset tulemüüri ja SSH lubamise reeglit. Kui kasutad SSH-d, hoia enne `enable` käsku monitori ja klaviatuuri ligipääs või teine juba avatud ühendus valmis.
 
@@ -476,9 +476,9 @@ Tähtis:
 
 Väljastpoolt kontrollimiseks võid oma arvutist proovida, kas varem avatud pordid vastavad enam. Kui näiteks JupyterLab `8888`, VNC `5900`, RDP `3389`, CUPS `631`, RPC `111` ja demoteenused enam võrgust ei vasta, aga SSH töötab, on piirang ootuspärane.
 
-## Samm 9: otsusta, kas image on piisavalt usaldusväärne
+## Samm 9: otsusta, kas kettatõmmis on piisavalt usaldusväärne
 
-Image on õppimiseks mõistlikus seisus, kui:
+Kettatõmmis on õppimiseks mõistlikus seisus, kui:
 
 - JetPack ja Jetson Linux on teada;
 - NVIDIA APT allikad sobivad selle versiooniga;
@@ -486,11 +486,11 @@ Image on õppimiseks mõistlikus seisus, kui:
 - vaikimisi paroolid on vahetatud;
 - avatud võrguteenused on teada;
 - tavaline `apt upgrade` lõpeb vigadeta;
-- saad vajadusel image'i taastada või uuesti paigaldada.
+- saad vajadusel kettatõmmise taastada või uuesti paigaldada.
 
 Tee puhas paigaldus, kui:
 
-- sa ei tea image'i päritolu;
+- sa ei tea kettatõmmise päritolu;
 - APT allikad on segased või vastuolulised;
 - süsteemis on tundmatuid kasutajaid või paroole;
 - uuendused ebaõnnestuvad;
@@ -512,7 +512,7 @@ Tee puhas paigaldus, kui:
 ```text
 JetPack:
 Jetson Linux / L4T:
-Edasimüüja image'i allikas:
+Edasimüüja kettatõmmise allikas:
 APT allikad kontrollitud:
 Vaikimisi paroolid vahetatud:
 Tundmatud kontod kontrollitud:
@@ -520,7 +520,7 @@ Avatud teenused kontrollitud:
 Tulemüür seadistatud:
 Paketid uuendatud:
 nvidia-jetpack seis:
-Otsus: jätkan selle image'iga / teen puhta paigalduse
+Otsus: jätkan selle kettatõmmisega / teen puhta paigalduse
 ```
 
 Järgmine samm: [Riistvara ja algseadistus](01-riistvara-ja-algseadistus.md).

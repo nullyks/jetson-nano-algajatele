@@ -64,10 +64,13 @@ Kontrollitud: 2026-07-19.
 
 Õppematerjalides kontrollitakse võimaluse korral infoturbe, süsteemihalduse ja muu IT-erialakeele eestikeelseid termineid AKITist. Kui kirje on mitmetähenduslik või puudub, tuleb kasutada konteksti sobivat selget terminit ning esmamainimisel lisada ingliskeelne vaste.
 
+- püsivara (*firmware*): seadmes püsivalt talletatud tarkvara; õppetükis nimetatakse selle numbrilist tähistust püsivara versiooniks;
+- konteinerpakett või Dockeri kettatõmmis (*Docker image*): konteineri käivitamiseks vajalik Dockeri pakendatud tõmmis.
+
 ## Praegune versioonipilt
 
-- Jetson Orin Nano Developer Kit ametlik kiirjuhend kasutab JetPack 7.2 puhul Jetson ISO USB-paigaldust. Alates JetPack 7.2-st ei kasutata enam microSD-kaardi image'i otse flashimiseks.
-- JetPack 7.2 paigaldus eeldab JetPack 6.x põlvkonna UEFI/QSPI firmware'i. Kui seade on vana tehasetarkvaraga, tuleb firmware'i uuendamise tee eraldi läbi teha.
+- Jetson Orin Nano Developer Kit ametlik kiirjuhend kasutab JetPack 7.2 puhul Jetson ISO USB-paigaldust. Alates JetPack 7.2-st ei kasutata enam microSD-kaardi ISO-tõmmist otse flashimiseks.
+- JetPack 7.2 paigaldus eeldab JetPack 6.x põlvkonna UEFI/QSPI püsivara. Kui seadmes on vana püsivara versioon, tuleb püsivara enne paigaldust JetPack 6.x juhendi järgi uuendada.
 - NVIDIA juhend soovitab sihtkettaks kas vähemalt 64 GB UHS-1 microSD kaarti või NVMe SSD-d. AI mudelite, konteinerite ja andmete jaoks on NVMe praktilisem.
 - JetPack SDK komponendid saab paigaldada või uuendada `nvidia-jetpack` paketiga.
 - NVIDIA dokumentatsioon kirjeldab Jetson Linuxi tavaliseks sama haru uuenduseks rada `sudo apt update`, `apt list --upgradable`, `sudo apt upgrade`, seejärel reboot. Suurema JetPacki / Jetson Linuxi versioonivahetuse puhul tuleb järgida JetPacki dokumentatsiooni, mitte tavalist Ubuntu `do-release-upgrade` rada.
@@ -75,4 +78,4 @@ Kontrollitud: 2026-07-19.
 - Jetson AI Lab on hea praktiliste generatiivse AI juhendite koht. Ollama juhend märgib, et Ollamal on Jetsoni CUDA tugi ja see on lihtne sissepääs kohalike LLM-ide jooksutamiseks.
 - NanoOWL juhend on hea rada avatud sõnavaraga objektituvastuse katsetamiseks, kuid selle juhendis on JetPacki toena kirjas JetPack 5/6. JetPack 7.x puhul kontrolli enne ühilduvust.
 - DeepStream on kasulik siis, kui liigud mitme videovoo, tootmislaadse pipeline'i või parema voogedastuse juurde. NVIDIA DeepStreami dokumentatsioon soovitab uutele kasutajatele kiireks alustamiseks Dockerit.
-- Edasimüüja image'i puhul salvesta enne uuendamist algseis, kontrolli kasutajakontosid, APT allikaid ja avatud teenuseid ning hoia taastamisrada alles.
+- Edasimüüja kettatõmmise puhul salvesta enne uuendamist algseis, kontrolli kasutajakontosid, APT allikaid ja avatud teenuseid ning hoia taastamisjuhend alles.

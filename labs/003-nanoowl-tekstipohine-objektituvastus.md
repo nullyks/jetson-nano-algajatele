@@ -90,45 +90,45 @@ Miks see vajalik on: NanoOWL kasutab teistsugust Python-, PyTorch- ja TensorRT k
 
 Oodatud tulemus: `jetson-containers --help` kuvab abi ning `autotag nanoowl` väljastab konteineri nime. Kui `autotag` pakub mitmetunnist ehitamist, ära kinnita seda pimesi: kirjuta pakkumine päevikusse ja kontrolli uuesti kettaruumi ning L4T versiooni.
 
-Kui automaatne valik töötas, salvesta valitud pilt muutujasse. Käivita see käsk igas uues Jetsoni terminalis enne järgmiste jaotiste konteinerikäske:
+Kui automaatne valik töötas, salvesta valitud konteinerpakett muutujasse. Käivita see käsk igas uues Jetsoni terminalis enne järgmiste jaotiste konteinerikäske:
 
 ```bash
-# Küsi autotag tööriistalt sobiv NanoOWL-i pilt ja jäta nimi praeguse terminali muutujasse.
+# Küsi autotag tööriistalt sobiv NanoOWL-i konteinerpakett ja jäta nimi praeguse terminali muutujasse.
 NANOOWL_IMAGE="$(autotag nanoowl)"
 
-# Näita valitud pilti. Siin ei tohi olla parooli ega muud privaatset teavet.
-printf 'NanoOWL konteiner: %s\n' "$NANOOWL_IMAGE"
+# Näita valitud konteinerpaketti. Siin ei tohi olla parooli ega muud privaatset teavet.
+printf 'NanoOWL-i konteinerpakett: %s\n' "$NANOOWL_IMAGE"
 ```
 
 ### L4T R36.4.7 erijuht
 
-Selles õppematerjalis kasutatud L4T R36.4.7 seadmes kontrolliti 2026-07-21, et ametlik pilt `dustynv/nanoowl:r36.4.0` on Dockeri registris olemas. Kui `autotag nanoowl` ei vasta mõistliku aja jooksul või ei leia pilti, peata see `Ctrl+C` abil ning kasuta järgmisi käske.
+Selles õppematerjalis kasutatud L4T R36.4.7 seadmes kontrolliti 2026-07-21, et ametlik konteinerpakett `dustynv/nanoowl:r36.4.0` on Dockeri registris olemas. Kui `autotag nanoowl` ei vasta mõistliku aja jooksul või ei leia konteinerpaketti, peata see `Ctrl+C` abil ning kasuta järgmisi käske.
 
 ```bash
-# Määra L4T R36.4.x jaoks kontrollitud NanoOWL-i pilt praeguse terminali muutujasse.
+# Määra L4T R36.4.x jaoks kontrollitud NanoOWL-i konteinerpakett praeguse terminali muutujasse.
 NANOOWL_IMAGE="dustynv/nanoowl:r36.4.0"
 
-# Kontrolli registrist pildi olemasolu ilma mitmegigabaidist pilti veel alla laadimata.
+# Kontrolli registrist konteinerpaketi olemasolu ilma mitmegigabaidist konteinerpaketti veel alla laadimata.
 docker manifest inspect "$NANOOWL_IMAGE" >/dev/null && \
-  printf 'NanoOWL-i pilt on registris olemas.\n'
+  printf 'NanoOWL-i konteinerpakett on registris olemas.\n'
 ```
 
-Mida need käsud teevad: esimene määrab edaspidi kasutatava pildi nime. Teine küsib Dockeri registrist ainult pildi manifesti, mitte tervet konteinerit.
+Mida need käsud teevad: esimene määrab edaspidi kasutatava konteinerpaketi nime. Teine küsib Dockeri registrist ainult konteinerpaketi manifesti, mitte tervet konteinerpaketti.
 
-Miks see vajalik on: nii ei jää õppija automaatse sildiotsingu taha kinni. Konkreetne pilt on ühilduvuskatse, seega kirjuta kasutatud silt päevikusse ja kontrolli laboris kõiki oodatud tulemusi.
+Miks see vajalik on: nii ei jää õppija automaatse sildiotsingu taha kinni. Konkreetne konteinerpakett on ühilduvuskatse, seega kirjuta kasutatud silt päevikusse ja kontrolli laboris kõiki oodatud tulemusi.
 
 Kõigis järgmistes `jetson-containers run` käskudes kasutatakse muutujat `$NANOOWL_IMAGE`.
 
-### Loo kohalik NanoOWL-i paranduspilt
+### Loo kohalik NanoOWL-i paranduskonteinerpakett
 
-Kontrollitud NanoOWL-i pildil puudub M9 Pro veebidemo jaoks vajalik `aiohttp` teek. Sama pildi näidiskood annab OpenCV uuema versiooniga tulemuspildi joonistamisel vea, sest pildimassiiv on kirjutuskaitstud. Järgmine ühekordne samm teeb Jetsonis **kohaliku** pildi, mis lisab puuduva teegi ja parandab selle ühe rea. Seda pilti ei saadeta Docker Hubi ega GitHubi.
+Kontrollitud NanoOWL-i konteinerpaketis puudub M9 Pro veebidemo jaoks vajalik `aiohttp` teek. Konteinerpaketis olev näidiskood annab OpenCV uuema versiooniga tulemuspildi joonistamisel vea, sest pildimassiiv on kirjutuskaitstud. Järgmine ühekordne samm teeb Jetsonis **kohaliku** konteinerpaketi, mis lisab puuduva teegi ja parandab selle ühe rea. Seda konteinerpaketti ei saadeta Docker Hubi ega GitHubi.
 
 ```bash
-# Eemalda ainult eelmise, pooleli jäänud kohaliku pildi loomise konteiner.
+# Eemalda ainult eelmise, pooleli jäänud kohaliku konteinerpaketi loomise konteiner.
 # || true tähendab, et esimesel korral jätkub käsk ka siis, kui konteinerit veel ei ole.
 docker rm -f nanoowl-local-setup 2>/dev/null || true
 
-# Käivita kontrollitud NanoOWL-i pilt ajutise nimega.
+# Käivita kontrollitud NanoOWL-i konteinerpakett ajutise nimega.
 # Paigalda aiohttp ametlikust PyPI registrist ja tee OpenCV jaoks pildimassiiv kirjutatavaks.
 docker run --name nanoowl-local-setup "$NANOOWL_IMAGE" \
   bash -lc '
@@ -137,25 +137,25 @@ docker run --name nanoowl-local-setup "$NANOOWL_IMAGE" \
       /opt/nanoowl/nanoowl/owl_drawing.py
   '
 
-# Salvesta muudetud ajutine konteiner Jetsoni kohalikuks NanoOWL-i pildiks.
+# Salvesta muudetud ajutine konteiner Jetsoni kohalikuks NanoOWL-i konteinerpaketiks.
 docker commit nanoowl-local-setup nanoowl-local:latest
 
-# Ajutist konteinerit pole pärast pildi salvestamist enam vaja.
+# Ajutist konteinerit pole pärast konteinerpaketi loomist enam vaja.
 docker rm nanoowl-local-setup
 
-# Kasuta labori ülejäänud käskudes kohaliku paranduspildi nime.
+# Kasuta labori ülejäänud käskudes kohaliku paranduskonteinerpaketi nime.
 NANOOWL_IMAGE="nanoowl-local:latest"
 
-# Kontrolli, et kohalik pilt on olemas.
+# Kontrolli, et kohalik konteinerpakett on olemas.
 docker image inspect "$NANOOWL_IMAGE" >/dev/null && \
-  printf 'Kohalik NanoOWL-i paranduspilt on valmis.\n'
+  printf 'Kohalik NanoOWL-i paranduskonteinerpakett on valmis.\n'
 ```
 
-Mida käsud teevad: `aiohttp` võimaldab NanoOWL-i `tree_demo.py` veebiserveri käivitada. `sed -i` muudab NanoOWL-i pildis ühe näidiskoodi rea: `.copy()` annab OpenCV-le kirjutatava pildimassiivi. `docker commit` salvestab tulemuse ainult selle Jetsoni Dockerisse.
+Mida käsud teevad: `aiohttp` võimaldab NanoOWL-i `tree_demo.py` veebiserveri käivitada. `sed -i` muudab NanoOWL-i konteinerpaketis ühe näidiskoodi rea: `.copy()` annab OpenCV-le kirjutatava pildimassiivi. `docker commit` salvestab tulemuse ainult selle Jetsoni Dockerisse kohaliku konteinerpaketina.
 
 Miks see vajalik on: ilma selle sammuta võib pildituvastus tulemuse joonistamisel katkeda veaga `cv2.rectangle ... readonly` ja M9 Pro veebidemo veaga `No module named aiohttp`.
 
-Oodatud tulemus: `nanoowl-local:latest` on Jetsoni kohalike Docker-piltide loetelus. Edaspidi kasuta samas terminalis muutujat `$NANOOWL_IMAGE`; see viitab nüüd parandatud pildile.
+Oodatud tulemus: `nanoowl-local:latest` on Jetsoni kohalike Dockeri konteinerpakettide loetelus. Edaspidi kasuta samas terminalis muutujat `$NANOOWL_IMAGE`; see viitab nüüd parandatud konteinerpaketile.
 
 ## 3. Loo püsivad kaustad
 

@@ -23,7 +23,7 @@ See repo on eestikeelne õppematerjalide ja katsete kogu NVIDIA Jetson Orin Nano
 1. [Teekaart](docs/00-teekaart.md)
 2. Vali üks tarkvara algseisu rada:
    - [Puhas paigaldus tühjale kettale](docs/01a-puhas-paigaldus-tuhjale-kettale.md), kui sihtketas on tühi või soovid ametlikku NVIDIA paigaldust.
-   - [Edasimüüja image'i kontroll ja uuendamine](docs/01b-edasimuuja-image-kontroll-ja-uuendamine.md), kui seade tuli valmis image'iga.
+   - [Edasimüüja kettatõmmise kontroll ja uuendamine](docs/01b-edasimuuja-image-kontroll-ja-uuendamine.md), kui seade tuli valmis kettatõmmisega.
 3. [SSH võtmega ühendus Windowsis ja macOSis](docs/01c-ssh-votmega-uhendus-windows-macos.md), kui hakkad Jetsonit oma arvutist haldama.
 4. [Riistvara ja algseadistus](docs/01-riistvara-ja-algseadistus.md)
 5. [Kaamera ja raalnägemine](docs/02-kaamera-ja-computer-vision.md)

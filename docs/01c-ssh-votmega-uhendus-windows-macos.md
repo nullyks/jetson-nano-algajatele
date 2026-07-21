@@ -344,7 +344,7 @@ Mida need seaded teevad:
 - `PasswordAuthentication no` keelab tavalise parooliga SSH sisselogimise.
 - `KbdInteractiveAuthentication no` keelab klaviatuuri-interaktiivse paroolilaadse autentimise, mis võib muidu parooliga sisselogimisele sarnase ukse avatuks jätta.
 
-Miks see vajalik on: edasimüüja image'id võivad tulla tuntud kasutajanimede ja paroolidega. Kui võtmega sisselogimine töötab, vähendab parooliga SSH keelamine riski, et keegi samas võrgus proovib vaikimisi paroole.
+Miks see vajalik on: edasimüüja kettatõmmised võivad tulla tuntud kasutajanimede ja paroolidega. Kui võtmega sisselogimine töötab, vähendab parooliga SSH keelamine riski, et keegi samas võrgus proovib vaikimisi paroole.
 
 ### 2. Kontrolli seadistus enne laadimist
 
@@ -458,7 +458,7 @@ Miks see vajalik on: kui võtmefail on kogemata teises kohas, siis `IdentityFile
 
 ### Jetson installiti uuesti ja SSH hoiatab host key muutuse eest
 
-Kui oled Jetsoni ise uuesti paigaldanud või image'i taastanud, muutub Jetsoni SSH serveri hostivõti. Eemalda vana kirje oma arvutist:
+Kui oled Jetsoni ise uuesti paigaldanud või kettatõmmise taastanud, muutub Jetsoni SSH serveri hostivõti. Eemalda vana kirje oma arvutist:
 
 Windows PowerShellis:
 
@@ -488,7 +488,7 @@ Oled valmis parooliga SSH kinni panema, kui:
 - oled testinud seda uues terminaliaknas;
 - tead, kuidas vajadusel monitori ja klaviatuuriga Jetsonisse tagasi minna.
 
-Järgmine samm: [Edasimüüja image'i kontroll ja uuendamine](01b-edasimuuja-image-kontroll-ja-uuendamine.md).
+Järgmine samm: [Edasimüüja kettatõmmise kontroll ja uuendamine](01b-edasimuuja-image-kontroll-ja-uuendamine.md).
 
 ## Allikad
 

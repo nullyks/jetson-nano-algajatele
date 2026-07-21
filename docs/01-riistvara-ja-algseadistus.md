@@ -3,7 +3,7 @@
 Enne seda õppetükki tee üks tarkvara algseisu rada:
 
 - [Puhas paigaldus tühjale kettale](01a-puhas-paigaldus-tuhjale-kettale.md)
-- [Edasimüüja image'i kontroll ja uuendamine](01b-edasimuuja-image-kontroll-ja-uuendamine.md)
+- [Edasimüüja kettatõmmise kontroll ja uuendamine](01b-edasimuuja-image-kontroll-ja-uuendamine.md)
 
 ## Seade
 
@@ -32,7 +32,7 @@ Tähtis:
 - JetPack 7.2 puhul ära kirjuta ISO faili otse microSD kaardile.
 - ISO kirjutatakse USB pulgale ja Jetson kasutab seda paigaldajana.
 - Jetson Linux paigaldatakse sihtkettale: microSD kaart või NVMe SSD.
-- Kui seadmel on vana tehasest tulnud firmware, tuleb enne JetPack 7.2 paigaldust läbi teha JetPack 6.x firmware'i uuendamise tee.
+- Kui seadmel on vana tehasest tulnud püsivara versioon, tuleb enne JetPack 7.2 paigaldust teha läbi JetPack 6.x püsivara uuendamine.
 
 Praktiline soovitus õppimiseks: kasuta NVMe SSD-d, kui see on olemas. Mudelid, konteinerid ja andmestikud täitavad microSD kaardi kiiresti.
 

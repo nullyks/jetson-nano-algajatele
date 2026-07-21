@@ -9,7 +9,7 @@ Eesmärk: enne kaameraid ja mudeleid tead, milline tarkvara seadmes jookseb, kus
 Tulemused:
 
 - tead, milline JetPack / Jetson Linux versioon seadmes jookseb;
-- tead, kas kasutad ametlikku NVIDIA paigaldust või edasimüüja kohandatud image'it;
+- tead, kas kasutad ametlikku NVIDIA paigaldust või edasimüüja kohandatud kettatõmmist;
 - sul on kirjas APT allikad, kasutajakontod ja võrgu kaudu avatud teenused;
 - vaikimisi paroolid on vahetatud;
 - süsteem on sama JetPacki haru piires uuendatud;
@@ -18,9 +18,9 @@ Tulemused:
 Vali üks rada:
 
 - kui andmekandja on tühi või tahad alustada puhtalt, tee [puhas paigaldus tühjale kettale](01a-puhas-paigaldus-tuhjale-kettale.md);
-- kui seade tuli YAHBOOMi või muu edasimüüja image'iga, tee [edasimüüja image'i kontroll ja uuendamine](01b-edasimuuja-image-kontroll-ja-uuendamine.md).
+- kui seade tuli YAHBOOMi või muu edasimüüja kettatõmmisega, tee [edasimüüja kettatõmmise kontroll ja uuendamine](01b-edasimuuja-image-kontroll-ja-uuendamine.md).
 
-Märkus: kui kasutad edasimüüja carrier board'i, kaamerat või robootikakomplekti, võib ametlik NVIDIA image kaotada osa edasimüüja seadistustest. Sel juhul tee enne puhast paigaldust image'ist varukoopia.
+Märkus: kui kasutad edasimüüja carrier board'i, kaamerat või robootikakomplekti, võib ametlik NVIDIA kettatõmmis kaotada osa edasimüüja seadistustest. Sel juhul tee enne puhast paigaldust kettatõmmisest varukoopia.
 
 Kui vajad pärast valitud rada kaugühendust, tee [SSH võtmega ühenduse juhend](01c-ssh-votmega-uhendus-windows-macos.md). Seejärel jätka riistvara kontrolliga.
 

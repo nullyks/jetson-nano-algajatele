@@ -4,7 +4,7 @@
 
 - Paigaldad Jetsonile ametliku NVIDIA tarkvara.
 - Valid sihtkettaks microSD kaardi või NVMe SSD.
-- Kontrollid, et firmware, Jetson Linux ja JetPacki komponendid on kooskõlas.
+- Kontrollid, et püsivara, Jetson Linux ja JetPacki komponendid on kooskõlas.
 - Teed esimese turvalise algseadistuse.
 
 See rada sobib siis, kui komplekt tuli ilma valmis kettata või tahad alustada puhta, ametliku süsteemiga.
@@ -38,20 +38,20 @@ Tähtis eristus:
 
 NVMe SSD on õppimiseks mugavam kui microSD kaart, sest AI mudelid, konteinerid ja andmestikud võtavad kiiresti palju ruumi.
 
-## Samm 1: kontrolli firmware'i rada
+## Samm 1: kontrolli püsivara versiooni
 
-JetPack 7.2 paigaldus eeldab JetPack 6.x põlvkonna UEFI/QSPI firmware'i. Kui firmware on liiga vana, tuleb enne JetPack 7.2 ISO käivitamist läbida JetPack 6.x uuendusrada.
+JetPack 7.2 paigaldus eeldab JetPack 6.x põlvkonna UEFI/QSPI püsivara. Kui püsivara versioon on liiga vana, uuenda püsivara enne JetPack 7.2 ISO käivitamist JetPack 6.x juhendi järgi.
 
 Monitoriga:
 
 1. Ühenda DisplayPort monitor ja USB klaviatuur.
 2. Lülita Jetson sisse.
 3. Vajuta NVIDIA logo ajal korduvalt `Esc`.
-4. Vaata UEFI menüüs firmware'i versiooni.
+4. Vaata UEFI menüüs püsivara versiooni.
 5. Kui versioon on `36.x` või uuem, võid minna järgmise sammu juurde.
 6. Kui versioon on vanem kui `36.0` või sa ei saa JetPack 7.2 installerit käima, tee NVIDIA JetPack 6.x Update Path.
 
-Ära võta firmware'i uuenduse ajal toidet ära. See on üks neist hetkedest, kus väike kannatlikkus on odavam kui suur peavalu.
+Ära võta püsivara uuenduse ajal toidet ära. See on üks neist hetkedest, kus väike kannatlikkus on odavam kui suur peavalu.
 
 ## Samm 2: laadi alla ametlik Jetson ISO
 
@@ -67,7 +67,7 @@ Jetson Linux / L4T:
 Kontrollsumma, kui NVIDIA selle annab:
 ```
 
-Ära kasuta juhuslikku pilveteenuse linki ega foorumist leitud image'it, kui eesmärk on tuntud ja korratav algseis.
+Ära kasuta juhuslikku pilveteenuse linki ega foorumist leitud ISO-tõmmist, kui eesmärk on tuntud ja korratav algseis.
 
 ## Samm 3: loo paigaldus-USB
 
@@ -85,7 +85,7 @@ Tähtis:
 2. Pane USB installer Jetsoni USB porti.
 3. Ühenda monitor, klaviatuur ja toide.
 4. Kui Jetson ei käivitu USB installerilt automaatselt, vajuta NVIDIA logo ajal `Esc`, vali Boot Manager ja vali USB pulk.
-5. Paigaldaja võib enne Jetson Linuxi paigaldust küsida UEFI/QSPI firmware'i uuenduse kinnitust. Vajuta `Y` ainult siis, kui paigaldaja seda selgelt küsib, ning oota kõigi taaskäivituste lõpuni.
+5. Paigaldaja võib enne Jetson Linuxi paigaldust küsida UEFI/QSPI püsivara uuenduse kinnitust. Vajuta `Y` ainult siis, kui paigaldaja seda selgelt küsib, ning oota kõigi taaskäivituste lõpuni.
 6. Paigalda Jetson Linux sihtkettale. Kinnita seade alles siis, kui oled kontrollinud, et valitud on õige microSD kaart või NVMe SSD: paigaldus kustutab selle sisu.
 7. Esimesel käivitusel loo oma kasutaja ja vali tugev, kordumatu parool.
 
@@ -245,7 +245,7 @@ Märkus: Ubuntu `unattended-upgrades` ei lisa automaatselt iga kolmanda osapoole
 ```text
 JetPack:
 Jetson Linux / L4T:
-UEFI/QSPI firmware:
+UEFI/QSPI püsivara versioon:
 Sihtketas:
 Kasutaja loodud:
 Vaikimisi paroole ei ole:
