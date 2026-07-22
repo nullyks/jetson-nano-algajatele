@@ -1,5 +1,26 @@
 # Lab 003: tekstiga juhitav objektituvastus - NanoOWL
 
+## Sisukord
+
+- [Eesmärk](#eesmärk)
+- [Mida õpid](#mida-õpid)
+- [Miks on see eraldi labor](#miks-on-see-eraldi-labor)
+- [Eeldused](#eeldused)
+- [1. Kontrolli ressursse](#1-kontrolli-ressursse)
+- [2. Paigalda jetson-containers](#2-paigalda-jetson-containers)
+- [3. Loo püsivad kaustad](#3-loo-püsivad-kaustad)
+- [4. Loo TensorRT mootor](#4-loo-tensorrt-mootor-orin-nano-8-gb-jaoks)
+- [5. Kolme kaamera piltide võrdlus](#5-kolme-kaamera-piltide-võrdlus)
+- [6. Tekstiviiba katse](#6-tekstiviiba-katse)
+- [7. Reaalajademo](#7-reaalajademo-usb-kaamera-csi-kaamera-ja-rtsp)
+- [8. Miks otsevoonäited on erinevad](#8-miks-otsevoonäited-on-erinevad)
+- [9. Võrdlus Lab 002-ga](#9-võrdlus-lab-002-ga)
+- [Ülesanded: tekstiviipadest olukorrani](#ülesanded-tekstiviipadest-olukorrani)
+- [10. Kontrollnimekiri](#10-kontrollnimekiri)
+- [Kui tulemust ei tule](#kui-tulemust-ei-tule)
+- [Edasine samm](#edasine-samm)
+- [Allikad](#allikad)
+
 ## Eesmärk
 
 Selles laboris kasutad NanoOWL-i: avatud sõnavaraga objektituvastust. Erinevalt Lab 002 `detectnet`-ist ei piirdu NanoOWL etteantud COCO klassidega, vaid otsitavad objektid tulevad tekstiviibast.

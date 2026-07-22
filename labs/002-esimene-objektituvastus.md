@@ -1,5 +1,26 @@
 # Lab 002: esimene objektituvastus - detectnet
 
+## Sisukord
+
+- [Eesmärk](#eesmärk)
+- [Mida õpid](#mida-õpid)
+- [Mõisted](#mõisted)
+- [Eeldused](#eeldused)
+- [1. Kontrolli eeldusi Jetsonis](#1-kontrolli-eeldusi-jetsonis)
+- [2. Paigalda jetson-inference ja ava konteiner](#2-paigalda-jetson-inference-ja-ava-konteiner)
+- [3. Kontrolli detectnet programmi](#3-kontrolli-detectnet-programmi)
+- [4. Esimene kontroll projekti näidispildiga](#4-esimene-kontroll-projekti-näidispildiga)
+- [5. Pildifail ei ole kaameravalik](#5-tähtis-eristus-pildifail-ei-ole-kaameravalik)
+- [6. Varem tehtud kaamerapildid](#6-sama-käsk-varem-tehtud-kaamerapildiga)
+- [7. CSI kaamera reaalajavoog](#7-csi-kaamera-reaalajavoog)
+- [8. USB kaamera reaalajavoog](#8-usb-kaamera-reaalajavoog)
+- [9. IP-kaamera RTSP reaalajavoog](#9-ip-kaamera-rtsp-reaalajavoog)
+- [10. Kontrollnimekiri](#10-kontrollnimekiri)
+- [Kui tulemust ei tule](#kui-tulemust-ei-tule)
+- [Ülesanded: objektituvastusest olukorrani](#ülesanded-objektituvastusest-olukorrani)
+- [Järgmine samm: NanoOWL](#järgmine-samm-nanoowl)
+- [Allikad](#allikad)
+
 ## Eesmärk
 
 Selles laboris kasutad `jetson-inference` programmi `detectnet`, et tuvastada objekte projekti näidispildil, seejärel CSI kaamera, USB kaamera ja IP-kaamera pildil ning lõpuks nende reaalajavoos.

@@ -1,5 +1,16 @@
 # Lab 004: esimene kohalik LLM
 
+## Sisukord
+
+- [Mida õpid](#mida-õpid)
+- [Eeldused](#eeldused)
+- [Samm 1: koormuse jälgimine](#samm-1-koormuse-jälgimine)
+- [Samm 2: vali väike mudel](#samm-2-vali-väike-mudel)
+- [Samm 3: käivita mudel](#samm-3-käivita-mudel)
+- [Samm 4: testpromptid](#samm-4-testpromptid)
+- [Kontrollküsimused](#kontrollküsimused)
+- [Kui ei tööta](#kui-ei-tööta)
+
 ## Mida õpid
 
 - Käivitad kohaliku LLM-i Jetsonil.

@@ -1,5 +1,19 @@
 # Lab 001: kaamera kontroll ja esimene kaader
 
+## Sisukord
+
+- [Mida õpid](#mida-õpid)
+- [Eeldused](#eeldused)
+- [Privaatsus enne alustamist](#privaatsus-enne-alustamist)
+- [Samm 1: kontrolli süsteemi ja tööriistu](#samm-1-kontrolli-süsteemi-ja-tööriistu)
+- [Samm 2: seo seadmenumber päris kaameraga](#samm-2-seo-seadmenumber-päris-kaameraga)
+- [Samm 3: CSI kaamera kaader](#samm-3-csi-kaamera-kaader-kui-devvideo0-annab-rg10-bayeri-toorandmed)
+- [Samm 4: USB kaamera kaader](#samm-4-usb-kaamera-kaader-seadmest-devvideo1)
+- [Samm 5: IP/RTSP kaamerast kaader](#samm-5-iprtsp-kaamerast-kaader)
+- [Kontrollküsimused](#kontrollküsimused)
+- [Kui ei tööta](#kui-ei-tööta)
+- [Tulemus](#tulemus)
+
 ## Mida õpid
 
 - Kontrollid, milline videoseade vastab millisele kaamerale.
