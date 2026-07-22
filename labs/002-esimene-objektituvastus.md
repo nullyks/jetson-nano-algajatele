@@ -16,8 +16,8 @@
 - [8. USB kaamera reaalajavoog](#8-usb-kaamera-reaalajavoog)
 - [9. IP-kaamera RTSP reaalajavoog](#9-ip-kaamera-rtsp-reaalajavoog)
 - [10. Kontrollnimekiri](#10-kontrollnimekiri)
-- [Kui tulemust ei tule](#kui-tulemust-ei-tule)
 - [Ülesanded: objektituvastusest olukorrani](#ülesanded-objektituvastusest-olukorrani)
+- [Kui tulemust ei tule](#kui-tulemust-ei-tule)
 - [Järgmine samm: NanoOWL](#järgmine-samm-nanoowl)
 - [Allikad](#allikad)
 
@@ -480,19 +480,6 @@ Labor on esimesel tasemel tehtud, kui kõik järgmised väited on tõesed.
 - RTSP pilt või reaalajavoog töötas ilma, et parool jõudis käsuajaloosse või hoidlasse.
 - Tead kasutatud mudelit ja läve ning oskad nimetada FPS-i või salvestatud video pikkust ja vähemalt üht valeleidu või märkamata jäänud objekti.
 
-## Kui tulemust ei tule
-
-| Sümptom | Kõige tõenäolisem põhjus | Esimene järgmine samm |
-| --- | --- | --- |
-| `docker version` ei näita serverit | Docker'i deemon ei tööta või kasutajal puudub õigus | paranda kõigepealt 0. taseme Docker'i seadistus |
-| `manifest ... not found` | sellele L4T väljalaskele pole vaikimisi konteinerisilti | järgi jaotist „Kui vaikimisi konteiner ei käivitu” |
-| `./detectnet: No such file or directory` | konteiner ei sisalda sobivat projekti ehitust | kontrolli konteineri silti ja abikäsku |
-| CSI kaamera ei avane | kasutati `/dev/video0` või CSI/Arguse tee ei tööta | kasuta `csi://0` ja korda Lab 001 CSI kaamera testi |
-| USB kaamera ei avane | `/dev/video1` või MJPEG vorming muutus | korda Lab 001 seadme- ja vormingukontrolli |
-| RTSP voog ei avane | võrguühendus, URL-i tee või kaamera õigused | korda Lab 001 RTSP ühe kaadri testi; ära jaga päris URL-i |
-| Liiga palju valepositiivseid leide | lävi on liiga madal või mudeli klassid ei sobi | tõsta läve näiteks väärtuseni `0.70` |
-| Õige objekt jääb märkamata | lävi on liiga kõrge, objekt on väike või klass puudub mudelis | langeta läve näiteks väärtuseni `0.30` |
-
 ## Ülesanded: objektituvastusest olukorrani
 
 Järgmised ülesanded kasutavad Lab 002 sama `ssd-mobilenet-v2` mudelit, kuid loevad tuvastusi Pythoni teegi kaudu. Nii saab programmi tulemuse asemel kasutada struktureeritud andmeid ja ajareegleid.
@@ -653,6 +640,19 @@ Kui avasid selle ülesande jaoks uue konteineri, loo RTSP muutujad uuesti Lab 00
 Soovi korral lisa käsule `--output /detectnet-results/person-detect.mp4`. Siis salvestab skript ka märgendatud videofaili; see on kasulik, kui tahad võrrelda logirida tegeliku kaadriga.
 
 Lahenduse lähtekood on [`scripts/detectnet_person_5s_log.py`](../scripts/detectnet_person_5s_log.py). Loe kommentaare ajamõõtmise, järjestuse lähtestamise ja `event_written` lipu juures. Viimane tagab, et katkematu viiesekundilise perioodi kohta ei lisata uut rida igas kaadris.
+
+## Kui tulemust ei tule
+
+| Sümptom | Kõige tõenäolisem põhjus | Esimene järgmine samm |
+| --- | --- | --- |
+| `docker version` ei näita serverit | Docker'i deemon ei tööta või kasutajal puudub õigus | paranda kõigepealt 0. taseme Docker'i seadistus |
+| `manifest ... not found` | sellele L4T väljalaskele pole vaikimisi konteinerisilti | järgi jaotist „Kui vaikimisi konteiner ei käivitu” |
+| `./detectnet: No such file or directory` | konteiner ei sisalda sobivat projekti ehitust | kontrolli konteineri silti ja abikäsku |
+| CSI kaamera ei avane | kasutati `/dev/video0` või CSI/Arguse tee ei tööta | kasuta `csi://0` ja korda Lab 001 CSI kaamera testi |
+| USB kaamera ei avane | `/dev/video1` või MJPEG vorming muutus | korda Lab 001 seadme- ja vormingukontrolli |
+| RTSP voog ei avane | võrguühendus, URL-i tee või kaamera õigused | korda Lab 001 RTSP ühe kaadri testi; ära jaga päris URL-i |
+| Liiga palju valepositiivseid leide | lävi on liiga madal või mudeli klassid ei sobi | tõsta läve näiteks väärtuseni `0.70` |
+| Õige objekt jääb märkamata | lävi on liiga kõrge, objekt on väike või klass puudub mudelis | langeta läve näiteks väärtuseni `0.30` |
 
 ## Järgmine samm: NanoOWL
 

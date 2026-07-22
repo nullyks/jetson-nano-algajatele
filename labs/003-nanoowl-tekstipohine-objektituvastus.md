@@ -15,8 +15,8 @@
 - [7. Reaalajademo](#7-reaalajademo-usb-kaamera-csi-kaamera-ja-rtsp)
 - [8. Miks otsevoonäited on erinevad](#8-miks-otsevoonäited-on-erinevad)
 - [9. Võrdlus Lab 002-ga](#9-võrdlus-lab-002-ga)
-- [Ülesanded: tekstiviipadest olukorrani](#ülesanded-tekstiviipadest-olukorrani)
 - [10. Kontrollnimekiri](#10-kontrollnimekiri)
+- [Ülesanded: tekstiviipadest olukorrani](#ülesanded-tekstiviipadest-olukorrani)
 - [Kui tulemust ei tule](#kui-tulemust-ei-tule)
 - [Edasine samm](#edasine-samm)
 - [Allikad](#allikad)
@@ -579,6 +579,25 @@ Kontrollküsimused pärast võrdlust:
 - Mille poolest erineb tulemus Lab 002 `detectnet`-i tulemusest?
 - Kas tulemuse järgi saaks luua olukorrareegli?
 
+## 10. Kontrollnimekiri
+
+Labor on tehtud esimesel tasemel, kui:
+
+- `jetson-containers --help` töötab ning `NANOOWL_IMAGE` on valitud automaatselt või R36.4.7 erijuhuna;
+- kohalik paranduspilt `nanoowl-local:latest` on loodud ja `$NANOOWL_IMAGE` viitab sellele;
+- TensorRT mootor on kaustas `~/nanoowl-data`;
+- vähemalt ühe kaamera varem salvestatud pildist tekkis NanoOWL-i tulemuspilt;
+- oled proovinud sama pildi peal vähemalt kahte eri tekstiviipa;
+- tead, et pildifail ei ava kaamerat;
+- vähemalt ühe reaalajakaamera veebidemo töötab ning tead, milline `--source` sellele kaamerale sobib;
+- tead, miks CSI kaamera kasutab `--source csi`, mitte `--camera 0`;
+- tead, et RTSP aadress tuleb hoida keskkonnamuutujas, mitte kirjutada NanoOWL-i käsureale;
+- oled loonud vähemalt ühe tekstiviipade võrdluse JSON-i ja märgendatud pildi;
+- oskad selgitada, et `a face` ja `a hand` ei ole isikutuvastus;
+- oled käivitanud inimese pildiala- ja ajareegli või oskad nimetada selle ala, läve ja kestuse;
+- tead, et inimese leid puudub või alast väljumine nullib selle näitelahenduse taimeri;
+- ei ole salvestanud RTSP URL-i, parooli ega privaatseid kaamerapilte avalikku hoidlasse.
+
 ## Ülesanded: tekstiviipadest olukorrani
 
 Järgmised ülesanded kasutavad NanoOWL-i tekstiviipu Pythoni teegi kaudu. Esimeses ülesandes on tulemus korratav pildifail ja JSON. Teises ülesandes lisandub reaalajavoo kaadritele ajareegel ja pildiala. Nii muutub üksik objektileid mõõdetavaks olukorraks.
@@ -837,25 +856,6 @@ Miks see vajalik on: RTSP voog on võrguühendus, mitte Jetsoni kaameraindeks. K
 Tõenduspilt võib sisaldada inimesi. Hoia see ainult oma Jetsonis ja ära lisa seda ega sündmuslogi avalikku GitHubi hoidlasse.
 
 Näitelahenduse lähtekood on [`scripts/nanoowl_person_zone_event.py`](../scripts/nanoowl_person_zone_event.py). Loe kommentaare `parse_zone`, `best_detection_in_zone` ja taimeri olekumuutujate juures. Need näitavad, kuidas piksliandmed, tekstiviip, pildiala ja aeg ühendatakse üheks kontrollitavaks olukorrareegliks.
-
-## 10. Kontrollnimekiri
-
-Labor on tehtud esimesel tasemel, kui:
-
-- `jetson-containers --help` töötab ning `NANOOWL_IMAGE` on valitud automaatselt või R36.4.7 erijuhuna;
-- kohalik paranduspilt `nanoowl-local:latest` on loodud ja `$NANOOWL_IMAGE` viitab sellele;
-- TensorRT mootor on kaustas `~/nanoowl-data`;
-- vähemalt ühe kaamera varem salvestatud pildist tekkis NanoOWL-i tulemuspilt;
-- oled proovinud sama pildi peal vähemalt kahte eri tekstiviipa;
-- tead, et pildifail ei ava kaamerat;
-- vähemalt ühe reaalajakaamera veebidemo töötab ning tead, milline `--source` sellele kaamerale sobib;
-- tead, miks CSI kaamera kasutab `--source csi`, mitte `--camera 0`;
-- tead, et RTSP aadress tuleb hoida keskkonnamuutujas, mitte kirjutada NanoOWL-i käsureale;
-- oled loonud vähemalt ühe tekstiviipade võrdluse JSON-i ja märgendatud pildi;
-- oskad selgitada, et `a face` ja `a hand` ei ole isikutuvastus;
-- oled käivitanud inimese pildiala- ja ajareegli või oskad nimetada selle ala, läve ja kestuse;
-- tead, et inimese leid puudub või alast väljumine nullib selle näitelahenduse taimeri;
-- ei ole salvestanud RTSP URL-i, parooli ega privaatseid kaamerapilte avalikku hoidlasse.
 
 ## Kui tulemust ei tule
 
