@@ -762,7 +762,28 @@ Miks see vajalik on: CSI kaamera andur ei ole selles seadistuses USB kaameraga v
 
 #### RTSP-kaamera variant
 
-Loo kõigepealt jaotise 7.5 turvaliste `read` käskudega host-terminalis `RTSP_URL` keskkonnamuutuja. Ära kirjuta RTSP aadressi, kasutajanime ega parooli järgmisse käsku.
+Loo kõigepealt Jetsoni host-terminalis `RTSP_URL` keskkonnamuutuja. Ära kirjuta RTSP aadressi, kasutajanime ega parooli järgmisse käsku.
+
+```bash
+# Küsi RTSP kasutajanimi. Sisestatud tekst on terminalis nähtav.
+read -r -p "RTSP kasutajanimi: " RTSP_USER
+
+# Küsi RTSP parool. -s peidab sisestuse terminalis.
+read -r -s -p "RTSP parool: " RTSP_PASSWORD
+printf '\n'
+
+# Küsi kaamera hostinimi või IP-aadress ja koosta RTSP aadress ainult
+# praeguse terminaliseansi mälus oleva keskkonnamuutujana.
+read -r -p "RTSP kaamera host või IP: " RTSP_HOST
+export RTSP_URL="rtsp://${RTSP_USER}:${RTSP_PASSWORD}@${RTSP_HOST}:554/stream1"
+
+# Parooli eraldi muutujat pole pärast RTSP_URL koostamist enam vaja.
+unset RTSP_PASSWORD
+```
+
+Mida käsud teevad: `read` küsib väärtused alles käsu käivitamisel. Valik `-s` peidab parooli sisestuse. `export` teeb koostatud `RTSP_URL` muutuja järgmisele konteinerikäsule nähtavaks, kuid käsuajaloos on ainult muutujate nimed, mitte nende väärtused. `unset RTSP_PASSWORD` eemaldab parooli eraldi muutujast.
+
+Miks see vajalik on: RTSP kasutajanimi ja parool ei tohi jõuda GitHubi, ekraanipildile ega käsuajaloosse. Kui paroolis on URL-i erimärke nagu `@`, `:`, `/`, `?`, `#` või `%`, tuleb need URL-is protsentkodeerida.
 
 ```bash
 # Anna konteinerile edasi ainult RTSP_URL keskkonnamuutuja nimi.
