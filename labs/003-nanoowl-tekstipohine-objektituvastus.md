@@ -558,6 +558,244 @@ Kontrollküsimused pärast võrdlust:
 - Mille poolest erineb tulemus Lab 002 `detectnet`-i tulemusest?
 - Kas tulemuse järgi saaks luua olukorrareegli?
 
+## Ülesanded: tekstiviipadest olukorrani
+
+Järgmised ülesanded kasutavad NanoOWL-i tekstiviipu Pythoni teegi kaudu. Esimeses ülesandes on tulemus korratav pildifail ja JSON. Teises ülesandes lisandub reaalajavoo kaadritele ajareegel ja pildiala. Nii muutub üksik objektileid mõõdetavaks olukorraks.
+
+Enne ülesannete käivitamist too Jetsonis õppematerjalide uusim versioon ja loo püsivad tulemuste kaustad. Tee need käsud Jetsoni **host-terminalis**, mitte juba töötavas konteineris.
+
+```bash
+# Too GitHubist õppematerjalide uusim versioon koos kahe ülesandeskriptiga.
+# --ff-only peatub turvaliselt, kui oled Jetsonis samu faile ise muutnud.
+git -C "$HOME/jetson-nano-algajatele" pull --ff-only
+
+# Loo staatiliste piltide tekstiviipade võrdluse tulemuste jaoks püsiv kaust.
+mkdir -p "$HOME/nanoowl-results/prompt-compare"
+
+# Loo teise ülesande sündmuspiltide jaoks püsiv kaust.
+mkdir -p "$HOME/nanoowl-results/person-zone-evidence"
+
+# Kasuta selles terminalis varem loodud kohalikku NanoOWL-i paranduskonteinerpaketti.
+NANOOWL_IMAGE="nanoowl-local:latest"
+```
+
+Mida käsud teevad: `git pull` uuendab lahendusskriptid, `mkdir -p` loob väljundkaustad ainult siis, kui neid veel ei ole, ning `NANOOWL_IMAGE` hoiab konteinerpaketi nime järgmistes käskudes ühes kohas.
+
+Miks see vajalik on: NanoOWL-i mudel ja Pythoni teegid asuvad konteineris, kuid JSON, sündmuste logi ja tõenduspildid peavad jääma Jetsoni hosti alles ka pärast konteineri sulgemist.
+
+### Ülesanne 1: tekstiviipade võrdlus, JSON ja märgendatud pilt
+
+Töötle üks Lab 001 varem salvestatud pilt kolme tekstiviibaga: `a person`, `a face` ja `a hand`. Lahendus peab kirjutama JSON-faili pildi nime, kõik läve ületanud leiud, neid kirjeldava tekstiviiba, piirdekasti ja usaldusmäära. Sama käsk peab looma märgendatud pildifaili.
+
+Tekstiviibad on ingliskeelsed, sest NanoOWL-i alusmudel on nendega paremini võrreldav. `a face` ja `a hand` on visuaalsed otsingukirjeldused, mitte isikutuvastus: programm ei nimeta inimest ega võrdle nägusid kellegi andmebaasiga.
+
+Tee järgmine käsk Jetsoni host-terminalis. See töötleb olemasolevat USB kaamera JPEG faili; ükski kaamera ei avane.
+
+```bash
+# Seo konteinerisse skriptid, NanoOWL-i TensorRT mootor, ainult loetavad
+# algsed kaamerapildid ja hostis püsiv tulemuste kaust.
+# --prompts järel on kolm eraldi tekstiviipa; jutumärgid hoiavad tühikuga
+# tekstiviiba ühe argumendina.
+jetson-containers run \
+  --workdir /opt/nanoowl \
+  --volume "$HOME/jetson-nano-algajatele/scripts:/opt/jetson-beginner-scripts:ro" \
+  --volume "$HOME/nanoowl-data:/opt/nanoowl/data:ro" \
+  --volume "$HOME/jetson-camera-tests:/camera-tests:ro" \
+  --volume "$HOME/nanoowl-results:/nanoowl-results" \
+  "$NANOOWL_IMAGE" \
+  python3 /opt/jetson-beginner-scripts/nanoowl_prompt_compare.py \
+  --input /camera-tests/m9-pro-mjpg.jpg \
+  --engine /opt/nanoowl/data/owl_image_encoder_patch32.engine \
+  --output-json /nanoowl-results/prompt-compare/usb-prompts.json \
+  --output-image /nanoowl-results/prompt-compare/usb-prompts.jpg \
+  --prompts "a person" "a face" "a hand" \
+  --threshold 0.10
+```
+
+Mida see käsk teeb: skript loeb ühe JPEG faili, kodeerib kolm tekstiviipa üks kord, küsib NanoOWL-ilt iga läve ületanud leiu ning salvestab nii masinloetava JSON-i kui ka piirdekastidega pildi.
+
+Miks see vajalik on: sama pilt hoiab katse korratavana. Kui tulemus muutub, tead, et muutsid tekstiviipa või läve, mitte kaamera vaatenurka ega valgustust.
+
+Oodatud tulemus: hosti kausta `~/nanoowl-results/prompt-compare` tekivad failid `usb-prompts.json` ja `usb-prompts.jpg`. Leide võib olla null või mitu; mudeli skoor ei ole tõend, et objekt kindlasti pildil on.
+
+```bash
+# Vorminda JSON loetavalt ja kuva see terminalis.
+# See kontrollib ühtlasi, et fail on korrektne JSON-dokument.
+python3 -m json.tool "$HOME/nanoowl-results/prompt-compare/usb-prompts.json"
+
+# Kontrolli, et JSON ja märgendatud JPEG on olemas ning nende suurus ei ole null.
+ls -lh "$HOME/nanoowl-results/prompt-compare/usb-prompts.json" \
+  "$HOME/nanoowl-results/prompt-compare/usb-prompts.jpg"
+```
+
+JSON-i iga leiu kuju on järgmine. Numbrid on näitlikud, mitte sinu kaamerapildi tulemus.
+
+```json
+{
+  "prompt_index": 0,
+  "prompt": "a person",
+  "score": 0.7342,
+  "bounding_box": {
+    "left": 120.5,
+    "top": 44.0,
+    "right": 365.8,
+    "bottom": 470.2,
+    "width": 245.3,
+    "height": 426.2
+  }
+}
+```
+
+Mida väljad tähendavad: `prompt_index` näitab tekstiviiba järjekorranumbrit nullist alates, `prompt` on sellele vastav otsingutekst, `score` on mudeli skoor vahemikus 0 kuni 1 ning `bounding_box` on piirdekast piksliühikutes pildi vasakust ülanurgast. Faili ülaosas olev `prompts` loend säilitab kogu kasutatud tekstiviipade komplekti.
+
+Katseta sama käsku ka failidega `/camera-tests/imx219-argus.jpg` ja `/camera-tests/rtsp-frame.jpg`. Muuda ainult `--input`, `--output-json` ja `--output-image` failinimesid. Salvestatud RTSP pildi töötlemine ei ava võrguühendust ega vaja RTSP kasutajanime või parooli.
+
+Näitelahenduse lähtekood on [`scripts/nanoowl_prompt_compare.py`](../scripts/nanoowl_prompt_compare.py). Loe kommentaare eriti `detection_as_dict` funktsiooni ja `predictor.encode_text(prompts)` juures: esimene teisendab GPU tensorid JSON-i jaoks tavaväärtusteks ja teine väldib samade tekstiviipade uuesti kodeerimist.
+
+### Ülesanne 2: inimene pildiala sees 3 sekundi vältel
+
+Selles ülesandes on mõõdetav reegel järgmine.
+
+```text
+Kui NanoOWL tuvastab tekstiviiba "a person" piirdekasti keskpunkti
+pildi parempoolses kolmandikus katkematult vähemalt 3 sekundit,
+siis lisa JSON Lines logifaili tuvastusperioodi alguse ajatempel ja
+salvesta üks märgendatud tõenduspilt.
+```
+
+Pildiala on suhteliste koordinaatidega `0.66,0,1,1`: vasak piir on 66% pildi laiusest, ülemine piir on pildi ülaserv ning parem ja alumine piir on pildi servad. Piirdekasti keskpunkti kasutamine tähendab, et inimene ei käivita sündmust ainult seetõttu, et väike osa tema piirdekastist ulatub alasse.
+
+Tee järgmine käsk Jetsoni host-terminalis. Näide kasutab USB kaamerat praeguse V4L2 indeksiga `1`, mis vastab selles komplektis Lab 001 kontrolli ajal seadmele `/dev/video1`.
+
+```bash
+# Ava USB kaamera, otsi tekstiviibaga "a person" ja jälgi pildi parempoolset
+# kolmandikku. Kui reegel kehtib 3 sekundit järjest, lisab skript ühe JSONL
+# sündmuse ja salvestab märgendatud JPEG tõenduspildi.
+jetson-containers run \
+  --workdir /opt/nanoowl \
+  --volume "$HOME/jetson-nano-algajatele/scripts:/opt/jetson-beginner-scripts:ro" \
+  --volume "$HOME/nanoowl-data:/opt/nanoowl/data:ro" \
+  --volume "$HOME/nanoowl-results:/nanoowl-results" \
+  "$NANOOWL_IMAGE" \
+  python3 /opt/jetson-beginner-scripts/nanoowl_person_zone_event.py \
+  /opt/nanoowl/data/owl_image_encoder_patch32.engine \
+  --source v4l2 \
+  --camera 1 \
+  --resolution 640x480 \
+  --prompt "a person" \
+  --threshold 0.10 \
+  --duration 3 \
+  --zone 0.66,0,1,1 \
+  --log /nanoowl-results/person-zone-events.jsonl \
+  --evidence-dir /nanoowl-results/person-zone-evidence
+```
+
+Mida see käsk teeb: skript avab kaamera, teisendab iga BGR-kaadri NanoOWL-ile sobivaks RGB pildiks ning valib pildialas oleva suurima skooriga inimese leiu. Aja mõõtmiseks kasutab see `time.monotonic()` kella, mida süsteemikella muutmine ei mõjuta. Sündmuslogis on eraldi päriskella ajatempel, mille järgi saab sündmuse aega lugeda.
+
+Miks see vajalik on: üksik objektileid võib olla valeleid. Asukoha- ja ajanõue muudavad reegli täpsemaks: see ei tähenda lihtsalt, et inimene oli kusagil kaadris, vaid et inimene püsis etteantud alal piisavalt kaua.
+
+Oodatud tulemus: terminal teatab esmalt `Person-in-zone sequence started.` ja kolme järjestikuse sekundi järel sündmuse salvestamisest. Iga täitunud järjestikuse perioodi kohta lisatakse logisse üks rida. Kui inimene lahkub alast või ühes kaadris tema leid puudub, taimer nullitakse.
+
+Peata reaalajas katse klahvidega `Ctrl+C`, seejärel kontrolli tulemust host-terminalis.
+
+```bash
+# Näita sündmuslogi viimast JSON-rida loetavalt.
+# Kui fail puudub või on tühi, ei ole 3-sekundiline reegel veel täitunud.
+tail -n 1 "$HOME/nanoowl-results/person-zone-events.jsonl" | python3 -m json.tool
+
+# Näita viit viimast salvestatud tõenduspilti koos failisuurustega.
+ls -lht "$HOME/nanoowl-results/person-zone-evidence" | head -n 6
+```
+
+Logi ühe rea kuju on järgmine. See on JSON Lines vorming: iga füüsiline rida on eraldi JSON-objekt, mistõttu saab sündmusi hiljem ükshaaval töödelda.
+
+```json
+{
+  "event": "person_in_zone",
+  "started_at": "2026-01-01T12:34:56+02:00",
+  "confirmed_at": "2026-01-01T12:34:59+02:00",
+  "source": "v4l2",
+  "prompt": "a person",
+  "duration_seconds": 3.0,
+  "zone": {
+    "left": 0.66,
+    "top": 0.0,
+    "right": 1.0,
+    "bottom": 1.0
+  },
+  "evidence_image": "person-zone-20260101T123459000000+0200.jpg"
+}
+```
+
+Sama näitelahendus töötab ka teiste Lab 003 videoallikatega. Järgmised käsud on USB kaamera käsu täielikud variandid, et vajalikud kaustaseosed ja sisendivalikud oleksid selgelt nähtavad.
+
+#### CSI kaamera variant
+
+CSI kaamera jaoks ei kasutata `/dev/video0`. `--source csi` valib NVIDIA Arguse ja GStreameri töövoo ning `--sensor-id 0` tähendab esimest CSI andurit.
+
+```bash
+# Ava CSI kaamera Arguse kaudu ja kasuta täpselt sama pildiala- ning ajareeglit.
+# USB kaamera samaaegne ühendamine ei muuda --sensor-id 0 valikut.
+jetson-containers run \
+  --workdir /opt/nanoowl \
+  --volume "$HOME/jetson-nano-algajatele/scripts:/opt/jetson-beginner-scripts:ro" \
+  --volume "$HOME/nanoowl-data:/opt/nanoowl/data:ro" \
+  --volume "$HOME/nanoowl-results:/nanoowl-results" \
+  "$NANOOWL_IMAGE" \
+  python3 /opt/jetson-beginner-scripts/nanoowl_person_zone_event.py \
+  /opt/nanoowl/data/owl_image_encoder_patch32.engine \
+  --source csi \
+  --sensor-id 0 \
+  --resolution 640x480 \
+  --framerate 30 \
+  --prompt "a person" \
+  --threshold 0.10 \
+  --duration 3 \
+  --zone 0.66,0,1,1 \
+  --log /nanoowl-results/person-zone-events.jsonl \
+  --evidence-dir /nanoowl-results/person-zone-evidence
+```
+
+Mida see käsk teeb: `nvarguscamerasrc` hõivab CSI kaamera kaadrid, NVIDIA videoteisendus muudab need BGR-vormingusse ja skripti ülejäänud osa rakendab samal viisil tekstiviiba, pildiala ning kolmesekundilist reeglit.
+
+Miks see vajalik on: CSI kaamera andur ei ole selles seadistuses USB kaameraga võrreldav V4L2 värviline videoseade. Arguse töövoog teisendab toorandmed mudelile sobivaks pildiks enne NanoOWL-i.
+
+#### RTSP-kaamera variant
+
+Loo kõigepealt jaotise 7.5 turvaliste `read` käskudega host-terminalis `RTSP_URL` keskkonnamuutuja. Ära kirjuta RTSP aadressi, kasutajanime ega parooli järgmisse käsku.
+
+```bash
+# Anna konteinerile edasi ainult RTSP_URL keskkonnamuutuja nimi.
+# --source rtsp paneb skripti lugema väärtuse keskkonnast ja --latency 200
+# annab võrguvoole 200 ms puhvriruumi.
+jetson-containers run \
+  --workdir /opt/nanoowl \
+  --volume "$HOME/jetson-nano-algajatele/scripts:/opt/jetson-beginner-scripts:ro" \
+  --volume "$HOME/nanoowl-data:/opt/nanoowl/data:ro" \
+  --volume "$HOME/nanoowl-results:/nanoowl-results" \
+  --env RTSP_URL \
+  "$NANOOWL_IMAGE" \
+  python3 /opt/jetson-beginner-scripts/nanoowl_person_zone_event.py \
+  /opt/nanoowl/data/owl_image_encoder_patch32.engine \
+  --source rtsp \
+  --resolution 640x480 \
+  --latency 200 \
+  --prompt "a person" \
+  --threshold 0.10 \
+  --duration 3 \
+  --zone 0.66,0,1,1 \
+  --log /nanoowl-results/person-zone-events.jsonl \
+  --evidence-dir /nanoowl-results/person-zone-evidence
+```
+
+Mida see käsk teeb: skript loeb RTSP aadressi ainult `RTSP_URL` keskkonnamuutujast, GStreamer avab H.264 voo TCP kaudu ja NVIDIA videodekooder annab NanoOWL-ile BGR-kaadrid. Sündmuslogisse salvestatakse allika tüübina ainult `rtsp`, mitte kaamera aadress.
+
+Miks see vajalik on: RTSP voog on võrguühendus, mitte Jetsoni kaameraindeks. Keskkonnamuutuja hoiab ühendusandmed käsuajaloost, protsessiloendist ja õppematerjali failidest eemal.
+
+Tõenduspilt võib sisaldada inimesi. Hoia see ainult oma Jetsonis ja ära lisa seda ega sündmuslogi avalikku GitHubi hoidlasse.
+
+Näitelahenduse lähtekood on [`scripts/nanoowl_person_zone_event.py`](../scripts/nanoowl_person_zone_event.py). Loe kommentaare `parse_zone`, `best_detection_in_zone` ja taimeri olekumuutujate juures. Need näitavad, kuidas piksliandmed, tekstiviip, pildiala ja aeg ühendatakse üheks kontrollitavaks olukorrareegliks.
+
 ## 10. Kontrollnimekiri
 
 Labor on tehtud esimesel tasemel, kui:
@@ -571,6 +809,10 @@ Labor on tehtud esimesel tasemel, kui:
 - vähemalt ühe reaalajakaamera veebidemo töötab ning tead, milline `--source` sellele kaamerale sobib;
 - tead, miks CSI kaamera kasutab `--source csi`, mitte `--camera 0`;
 - tead, et RTSP aadress tuleb hoida keskkonnamuutujas, mitte kirjutada NanoOWL-i käsureale;
+- oled loonud vähemalt ühe tekstiviipade võrdluse JSON-i ja märgendatud pildi;
+- oskad selgitada, et `a face` ja `a hand` ei ole isikutuvastus;
+- oled käivitanud inimese pildiala- ja ajareegli või oskad nimetada selle ala, läve ja kestuse;
+- tead, et inimese leid puudub või alast väljumine nullib selle näitelahenduse taimeri;
 - ei ole salvestanud RTSP URL-i, parooli ega privaatseid kaamerapilte avalikku hoidlasse.
 
 ## Kui tulemust ei tule
@@ -586,6 +828,9 @@ Labor on tehtud esimesel tasemel, kui:
 | `cv2.rectangle ... readonly` | NanoOWL-i algne näidiskood annab OpenCV-le kirjutuskaitstud pildi | loo jaotises 2 kirjeldatud kohalik paranduspilt |
 | `No module named aiohttp` | NanoOWL-i algsest pildist puudub veebidemo teek | loo jaotises 2 kirjeldatud kohalik paranduspilt |
 | tulemuspilt on tühi või leide pole | tekstiviip, lävi või pilt ei sobi | alanda läve näiteks `0.05` ja lihtsusta ingliskeelset tekstiviipa |
+| tekstiviipade JSON või märgendatud pilt ei teki | tulemuste kaust ei olnud konteinerisse seotud või väljundtee on valesti kirjutatud | kontrolli ülesande 1 `--volume` ja `--output-*` ridu ning proovi uuesti |
+| pildiala-sündmust ei tule | inimene ei püsi valitud alas pidevalt, tekstiviip ei sobi või lävi on liiga kõrge | kontrolli tõenduseks esmalt ülesandes 1 `a person` tulemust, seejärel proovi väiksemat läve või suuremat ala |
+| `Could not save evidence image` | tulemuste kaust pole konteineris kirjutatav | kontrolli ülesande 2 `--volume "$HOME/nanoowl-results:/nanoowl-results"` rida ja hosti kausta õigusi |
 | USB kaamera demo ei ava pilti | `/dev/video1` ei ole enam USB kaamera või kaamera on hõivatud | korda Lab 001 seadmete kontrolli ja sulge muud kaameraprogrammid |
 | `Could not open CSI camera sensor-id 0` | Argus ei pääse sensorile ligi või kaamera on hõivatud | sulge muud CSI kaamera programmid, kontrolli Lab 001 Arguse testi ning käivita demo uuesti |
 | `Could not open RTSP stream` | `RTSP_URL` puudub, voog ei ole H.264 või võrk ei jõua kaamerani | kontrolli muutuja sisestamist, kaamera vooteed ja sama kohtvõrku; ära kuva URL-i avalikus kohas |
